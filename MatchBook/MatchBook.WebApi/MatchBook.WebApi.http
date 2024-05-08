@@ -1,0 +1,6 @@
+@MatchBook.WebApi_HostAddress = http://localhost:5001
+
+GET {{MatchBook.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
