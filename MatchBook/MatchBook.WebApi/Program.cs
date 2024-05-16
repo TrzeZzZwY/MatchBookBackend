@@ -1,11 +1,28 @@
+using MatchBook.Domain.Models;
+using MatchBook.Infrastructure.Data;
+using MatchBook.WebApi.Utils;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var configuration = builder.Configuration;
+var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddAuthorizationBuilder();
+
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(databaseOptions.ConnectionString));
+
+builder.Services.AddIdentityCore<ApplicationUser>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddApiEndpoints();
 
 var app = builder.Build();
 
@@ -19,6 +36,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 
