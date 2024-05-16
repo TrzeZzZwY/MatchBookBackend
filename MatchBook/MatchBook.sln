@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchBook.WebApi", "MatchBo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchBook.App", "MatchBook.App\MatchBook.App.csproj", "{D71CC4EA-4BFB-46FB-ABF8-4BAAB4C1E1D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchBook.Repo", "MatchBook.Repo\MatchBook.Repo.csproj", "{5E186C67-0D00-43D5-86FC-F3BEF79EBF3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchBook.Infrastructure", "MatchBook.Repo\MatchBook.Infrastructure.csproj", "{5E186C67-0D00-43D5-86FC-F3BEF79EBF3B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchBook.Domain", "MatchBook.Domain\MatchBook.Domain.csproj", "{758D0FF5-DD93-4DEE-960B-E7D52461310B}"
 EndProject
@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{362A86F0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchBook.UnitTest", "MatchBook.UnitTest\MatchBook.UnitTest.csproj", "{E6F4E471-A2AF-48DD-9454-F75EB50BF672}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchBook.ComponentTests", "MatchBook.ComponentTests\MatchBook.ComponentTests.csproj", "{64AA7152-C23E-4840-AE61-2F38B9BFCFC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchBook.ComponentTests", "MatchBook.ComponentTests\MatchBook.ComponentTests.csproj", "{64AA7152-C23E-4840-AE61-2F38B9BFCFC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

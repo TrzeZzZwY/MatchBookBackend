@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MatchBook.Repo\MatchBook.Repo.csproj" />
+    <ProjectReference Include="..\MatchBook.Repo\MatchBook.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
