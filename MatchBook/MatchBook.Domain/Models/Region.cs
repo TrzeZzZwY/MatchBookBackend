@@ -10,7 +10,7 @@ public class Region
 
     public DateTime CreateDate { get; set; }
 
-    public DateTime UpdateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
 
     public List<BookPoint> BookPoints { get; set; }
 

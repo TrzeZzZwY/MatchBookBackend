@@ -16,7 +16,7 @@ public class BookPoint
 
     public DateTime CreateDate { get; set; }
 
-    public DateTime UpdateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
 
     public List<Book> Books { get; set; }
 }
