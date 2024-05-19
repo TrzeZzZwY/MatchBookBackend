@@ -1,4 +1,6 @@
+using MatchBook.App.Command.CreateUser;
 using MatchBook.Domain.Models;
+using MatchBook.Infrastructure;
 using MatchBook.Infrastructure.Data;
 using MatchBook.WebApi.Utils;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +26,12 @@ builder.Services.AddIdentityCore<ApplicationUser>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddApiEndpoints();
 
+builder.Services.AddScoped<RegionRepository>();
+
+builder.Services.AddMediatR(config =>
+{
+    config.RegisterServicesFromAssembly(typeof(CreateUserCommandHandler).Assembly);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,7 +45,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapIdentityApi<ApplicationUser>();
+app.MapGroup("/identity").MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 
