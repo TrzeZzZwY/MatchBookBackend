@@ -12,6 +12,7 @@ namespace MatchBook.Infrastructure.Data.Configurations
             builder.ToTable(nameof(ApplicationUser));
 
             builder.HasOne(e => e.Image).WithOne(e => e.User).HasForeignKey<ApplicationUser>(e => e.ImageId).IsRequired(false);
+            builder.HasOne(e => e.RefreshToken).WithOne(e => e.User).HasForeignKey<ApplicationUser>(e => e.RefreshTokenId).IsRequired(false);
             builder.HasOne(e => e.Region).WithMany(e => e.Users);
             builder.HasMany(e => e.UserBooks).WithOne(e => e.User);
             builder.HasMany(e => e.FollowedAuthors).WithMany(e => e.Followers).UsingEntity("UserFollowedAuthorsJoinTable");

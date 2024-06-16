@@ -1,4 +1,5 @@
-﻿using MatchBook.Domain.Models;
+﻿using MatchBook.Domain.Exceptions;
+using MatchBook.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -23,6 +24,11 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
             Email = request.Email
         };
 
-        await _userManager.CreateAsync(user, request.Password);
+        var result  = await _userManager.CreateAsync(user, request.Password);
+
+        if (!result.Succeeded)
+        {
+            throw new IdentityException(string.Join(',', result.Errors.Select(e => e.Description)));
+        }
     }
 }

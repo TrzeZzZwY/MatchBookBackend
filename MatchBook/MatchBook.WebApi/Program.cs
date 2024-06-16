@@ -2,9 +2,13 @@ using MatchBook.App.Command.CreateUser;
 using MatchBook.Domain.Models;
 using MatchBook.Infrastructure;
 using MatchBook.Infrastructure.Data;
+using MatchBook.WebApi.Extensions;
 using MatchBook.WebApi.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MatchBook.App.Services.Auth;
+using MatchBook.App.Services;
+using MatchBook.App.Services.Token;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,18 +24,21 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorizationBuilder();
 
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(databaseOptions.ConnectionString));
+builder.Services.AddDbContext<AppDbContext>(opt =>
+    opt.UseSqlServer(databaseOptions.ConnectionString));
 
-builder.Services.AddIdentityCore<ApplicationUser>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddApiEndpoints();
+builder.Services.AddIdentity(configuration);
+builder.Services.AddJWTAuthentication(configuration);
 
 builder.Services.AddScoped<RegionRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(typeof(CreateUserCommandHandler).Assembly);
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,8 +51,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-app.MapGroup("/identity").MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 

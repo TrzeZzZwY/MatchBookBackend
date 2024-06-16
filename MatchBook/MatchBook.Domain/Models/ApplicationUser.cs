@@ -12,6 +12,10 @@ public class ApplicationUser : IdentityUser<int>
 
     public Region Region { get; set; }
 
+    public int RefreshTokenId { get; set; }
+
+    public RefreshToken RefreshToken { get; set; }
+
     public List<Book> UserBooks { get; set; }
 
     public List<Author> FollowedAuthors { get; set; }

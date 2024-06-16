@@ -31,6 +31,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
     public DbSet<Report> Reports => Set<Report>();
 
+    public DbSet<RefreshToken> Tokens => Set<RefreshToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

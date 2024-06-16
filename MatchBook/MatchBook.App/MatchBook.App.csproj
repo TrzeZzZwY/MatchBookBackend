@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\ITokenService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="12.2.0" />
   </ItemGroup>
 
@@ -16,7 +20,10 @@
 
   <ItemGroup>
     <Folder Include="Notification\" />
-    <Folder Include="Query\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Services\Token\ITokenService.cs" />
   </ItemGroup>
 
 </Project>
