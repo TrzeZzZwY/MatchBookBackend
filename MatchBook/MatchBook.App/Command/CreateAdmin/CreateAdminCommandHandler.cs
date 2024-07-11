@@ -6,21 +6,20 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MatchBook.App.Command.CreateUser;
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
+public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand>
 {
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<ApplicationAdmin> _userManager;
 
-    public CreateUserCommandHandler(UserManager<ApplicationUser> userManager)
+    public CreateAdminCommandHandler(UserManager<ApplicationAdmin> userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateAdminCommand request, CancellationToken cancellationToken)
     {
-        var user = new ApplicationUser
+        var user = new ApplicationAdmin
         {
             UserName = request.NickName,
-            RegionId = request.RegionId,
             Email = request.Email
         };
 

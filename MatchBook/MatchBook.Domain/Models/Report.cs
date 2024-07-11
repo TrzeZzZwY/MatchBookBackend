@@ -1,4 +1,5 @@
 ﻿using MatchBook.Domain.Enums;
+using MatchBook.Domain.Models.Identity;
 
 namespace MatchBook.Domain.Models;
 

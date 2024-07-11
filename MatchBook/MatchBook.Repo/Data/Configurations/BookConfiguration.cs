@@ -1,4 +1,5 @@
 ﻿using MatchBook.Domain.Models;
+using MatchBook.Domain.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

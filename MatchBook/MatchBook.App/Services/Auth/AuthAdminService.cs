@@ -3,23 +3,23 @@ using MatchBook.Domain.Exceptions;
 using MatchBook.Domain.Models.Identity;
 using MatchBook.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
 namespace MatchBook.App.Services.Auth;
 
-public class AuthService : IAuthService
+public class AuthAdminService : IAuthService
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly AppDbContext _context;
+    private readonly UserManager<ApplicationAdmin> _userManager;
+    private readonly AdminDbContext _context;
     private readonly ITokenService _tokenService;
 
-    public AuthService(UserManager<ApplicationUser> userManager, AppDbContext context, ITokenService tokenService)
+    public AuthAdminService(UserManager<ApplicationAdmin> userManager, AdminDbContext context, ITokenService tokenService)
     {
         _userManager = userManager;
         _context = context;
         _tokenService = tokenService;
     }
 
-    public bool CanHandle(Domain.Enums.ApplicationRole role) => role == Domain.Enums.ApplicationRole.user;
-
+    public bool CanHandle(Domain.Enums.ApplicationRole role) => role == Domain.Enums.ApplicationRole.admin;
 
     public async Task<AuthJwt> Login(string email, string password)
     {
@@ -34,7 +34,11 @@ public class AuthService : IAuthService
         if (user.RefreshToken == null || user.RefreshToken?.ExpireDate < DateTime.UtcNow)
         {
             var refreshToken = _tokenService.CreateRefreshToken();
-            user.RefreshToken = refreshToken;
+            user.RefreshToken = new Domain.Models.AdminRefreshToken
+            {
+                Token = refreshToken.Token,
+                ExpireDate = refreshToken.ExpireDate
+            };
             await _userManager.UpdateAsync(user);
         }
 
@@ -53,13 +57,17 @@ public class AuthService : IAuthService
         var newToken = _tokenService.CreateAccessToken(user, roles);
         var newRefreshToken = _tokenService.CreateRefreshToken();
 
-        user.RefreshToken = newRefreshToken;
+        user.RefreshToken = new Domain.Models.AdminRefreshToken
+        {
+            Token = newRefreshToken.Token,
+            ExpireDate = newRefreshToken.ExpireDate
+        };
         await _userManager.UpdateAsync(user);
 
         return new AuthJwt(token: newToken, refreshToken: user.RefreshToken!.Token, userId: user.Id);
     }
 
-    private async Task LoadTokenForUser(ApplicationUser user)
+    private async Task LoadTokenForUser(ApplicationAdmin user)
     {
         await _context.Users.Entry(user).Reference(u => u.RefreshToken).LoadAsync();
     }

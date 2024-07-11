@@ -1,4 +1,6 @@
 ﻿using MatchBook.Domain.Models;
+using MatchBook.Domain.Models.Identity;
+using MatchBook.Infrastructure.Data.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,8 +38,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // Applying all configurations from assembly
-        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        modelBuilder.HasDefaultSchema("user");
+        modelBuilder
+            .ApplyConfiguration(new ApplicationRoleConfiguration())
+            .ApplyConfiguration(new ApplicationUserConfiguration())
+            .ApplyConfiguration(new AuthorConfiguration())
+            .ApplyConfiguration(new BookConfiguration())
+            .ApplyConfiguration(new BookPointConfiguration())
+            .ApplyConfiguration(new BookTitleConfiguration())
+            .ApplyConfiguration(new ChatConfiguration())
+            .ApplyConfiguration(new ImageConfiguration())
+            .ApplyConfiguration(new ImageTargetConfiguration())
+            .ApplyConfiguration(new MessageConfiguration())
+            .ApplyConfiguration(new RefreshTokenConfiguration())
+            .ApplyConfiguration(new RegionConfiguration());
     }
 }

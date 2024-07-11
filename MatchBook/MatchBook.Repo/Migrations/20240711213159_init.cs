@@ -6,13 +6,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MatchBook.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "user");
+
             migrationBuilder.CreateTable(
                 name: "ApplicationRole",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -28,6 +32,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Author",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -42,6 +47,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "BookTitle",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -55,6 +61,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Chat",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -68,6 +75,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ImageTarget",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -83,6 +91,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Region",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -99,6 +108,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -113,6 +123,7 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_ApplicationRole_RoleId",
                         column: x => x.RoleId,
+                        principalSchema: "user",
                         principalTable: "ApplicationRole",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -120,6 +131,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Image",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -136,6 +148,7 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Image_ImageTarget_TargetId",
                         column: x => x.TargetId,
+                        principalSchema: "user",
                         principalTable: "ImageTarget",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -143,6 +156,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "BookPoint",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -160,18 +174,21 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_BookPoint_Region_RegionId",
                         column: x => x.RegionId,
+                        principalSchema: "user",
                         principalTable: "Region",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "ApplicationUser",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ImageId = table.Column<int>(type: "int", nullable: true),
                     RegionId = table.Column<int>(type: "int", nullable: false),
+                    RefreshTokenId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -193,11 +210,13 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_ApplicationUser_Image_ImageId",
                         column: x => x.ImageId,
+                        principalSchema: "user",
                         principalTable: "Image",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ApplicationUser_Region_RegionId",
                         column: x => x.RegionId,
+                        principalSchema: "user",
                         principalTable: "Region",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -205,6 +224,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -219,6 +239,7 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -226,6 +247,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
+                schema: "user",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -239,6 +261,7 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -246,6 +269,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
+                schema: "user",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -257,12 +281,14 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_ApplicationRole_RoleId",
                         column: x => x.RoleId,
+                        principalSchema: "user",
                         principalTable: "ApplicationRole",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -270,6 +296,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
+                schema: "user",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -283,6 +310,7 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -290,6 +318,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Book",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -311,30 +340,35 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Book_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Book_BookPoint_BookPointId",
                         column: x => x.BookPointId,
+                        principalSchema: "user",
                         principalTable: "BookPoint",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Book_BookTitle_TitleId",
                         column: x => x.TitleId,
+                        principalSchema: "user",
                         principalTable: "BookTitle",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Book_Image_ImageId",
                         column: x => x.ImageId,
+                        principalSchema: "user",
                         principalTable: "Image",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "ChatUsersJoinTable",
+                schema: "user",
                 columns: table => new
                 {
                     ChatsId = table.Column<int>(type: "int", nullable: false),
@@ -346,12 +380,14 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_ChatUsersJoinTable_ApplicationUser_MembersId",
                         column: x => x.MembersId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ChatUsersJoinTable_Chat_ChatsId",
                         column: x => x.ChatsId,
+                        principalSchema: "user",
                         principalTable: "Chat",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -359,6 +395,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Message",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -373,19 +410,45 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Message_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Message_Chat_ChatId",
                         column: x => x.ChatId,
+                        principalSchema: "user",
                         principalTable: "Chat",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                schema: "user",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshToken_ApplicationUser_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "user",
+                        principalTable: "ApplicationUser",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reports",
+                schema: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -402,6 +465,7 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Reports_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -409,6 +473,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserFollowedAuthorsJoinTable",
+                schema: "user",
                 columns: table => new
                 {
                     FollowedAuthorsId = table.Column<int>(type: "int", nullable: false),
@@ -420,12 +485,14 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_UserFollowedAuthorsJoinTable_ApplicationUser_FollowersId",
                         column: x => x.FollowersId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserFollowedAuthorsJoinTable_Author_FollowedAuthorsId",
                         column: x => x.FollowedAuthorsId,
+                        principalSchema: "user",
                         principalTable: "Author",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -433,6 +500,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserFollowedTitlesJoinTable",
+                schema: "user",
                 columns: table => new
                 {
                     FollowedTitlesId = table.Column<int>(type: "int", nullable: false),
@@ -444,12 +512,14 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_UserFollowedTitlesJoinTable_ApplicationUser_FollowersId",
                         column: x => x.FollowersId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserFollowedTitlesJoinTable_BookTitle_FollowedTitlesId",
                         column: x => x.FollowedTitlesId,
+                        principalSchema: "user",
                         principalTable: "BookTitle",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -457,6 +527,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "BookAuthorsJoinTable",
+                schema: "user",
                 columns: table => new
                 {
                     AuthorsId = table.Column<int>(type: "int", nullable: false),
@@ -468,12 +539,14 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_BookAuthorsJoinTable_Author_AuthorsId",
                         column: x => x.AuthorsId,
+                        principalSchema: "user",
                         principalTable: "Author",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BookAuthorsJoinTable_Book_BooksId",
                         column: x => x.BooksId,
+                        principalSchema: "user",
                         principalTable: "Book",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -481,6 +554,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserBookLikesJoinTable",
+                schema: "user",
                 columns: table => new
                 {
                     BookId = table.Column<int>(type: "int", nullable: false),
@@ -492,17 +566,20 @@ namespace MatchBook.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_UserBookLikesJoinTable_ApplicationUser_UserId",
                         column: x => x.UserId,
+                        principalSchema: "user",
                         principalTable: "ApplicationUser",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserBookLikesJoinTable_Book_BookId",
                         column: x => x.BookId,
+                        principalSchema: "user",
                         principalTable: "Book",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
+                schema: "user",
                 table: "ApplicationRole",
                 column: "NormalizedName",
                 unique: true,
@@ -510,11 +587,13 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
+                schema: "user",
                 table: "ApplicationUser",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUser_ImageId",
+                schema: "user",
                 table: "ApplicationUser",
                 column: "ImageId",
                 unique: true,
@@ -522,11 +601,13 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUser_RegionId",
+                schema: "user",
                 table: "ApplicationUser",
                 column: "RegionId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
+                schema: "user",
                 table: "ApplicationUser",
                 column: "NormalizedUserName",
                 unique: true,
@@ -534,31 +615,37 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
+                schema: "user",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
+                schema: "user",
                 table: "AspNetUserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
+                schema: "user",
                 table: "AspNetUserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
+                schema: "user",
                 table: "AspNetUserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Book_BookPointId",
+                schema: "user",
                 table: "Book",
                 column: "BookPointId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Book_ImageId",
+                schema: "user",
                 table: "Book",
                 column: "ImageId",
                 unique: true,
@@ -566,62 +653,81 @@ namespace MatchBook.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Book_TitleId",
+                schema: "user",
                 table: "Book",
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Book_UserId",
+                schema: "user",
                 table: "Book",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookAuthorsJoinTable_BooksId",
+                schema: "user",
                 table: "BookAuthorsJoinTable",
                 column: "BooksId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookPoint_RegionId",
+                schema: "user",
                 table: "BookPoint",
                 column: "RegionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChatUsersJoinTable_MembersId",
+                schema: "user",
                 table: "ChatUsersJoinTable",
                 column: "MembersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Image_TargetId",
+                schema: "user",
                 table: "Image",
                 column: "TargetId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_ChatId",
+                schema: "user",
                 table: "Message",
                 column: "ChatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_UserId",
+                schema: "user",
                 table: "Message",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_UserId",
+                schema: "user",
+                table: "RefreshToken",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reports_UserId",
+                schema: "user",
                 table: "Reports",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserBookLikesJoinTable_UserId",
+                schema: "user",
                 table: "UserBookLikesJoinTable",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserFollowedAuthorsJoinTable_FollowersId",
+                schema: "user",
                 table: "UserFollowedAuthorsJoinTable",
                 column: "FollowersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserFollowedTitlesJoinTable_FollowersId",
+                schema: "user",
                 table: "UserFollowedTitlesJoinTable",
                 column: "FollowersId");
         }
@@ -630,70 +736,96 @@ namespace MatchBook.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+                name: "AspNetRoleClaims",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+                name: "AspNetUserClaims",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+                name: "AspNetUserLogins",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                name: "AspNetUserRoles",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+                name: "AspNetUserTokens",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "BookAuthorsJoinTable");
+                name: "BookAuthorsJoinTable",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "ChatUsersJoinTable");
+                name: "ChatUsersJoinTable",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "Message");
+                name: "Message",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "Reports");
+                name: "RefreshToken",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "UserBookLikesJoinTable");
+                name: "Reports",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "UserFollowedAuthorsJoinTable");
+                name: "UserBookLikesJoinTable",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "UserFollowedTitlesJoinTable");
+                name: "UserFollowedAuthorsJoinTable",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "ApplicationRole");
+                name: "UserFollowedTitlesJoinTable",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "Chat");
+                name: "ApplicationRole",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "Book");
+                name: "Chat",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "Author");
+                name: "Book",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "ApplicationUser");
+                name: "Author",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "BookPoint");
+                name: "ApplicationUser",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "BookTitle");
+                name: "BookPoint",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "Image");
+                name: "BookTitle",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "Region");
+                name: "Image",
+                schema: "user");
 
             migrationBuilder.DropTable(
-                name: "ImageTarget");
+                name: "Region",
+                schema: "user");
+
+            migrationBuilder.DropTable(
+                name: "ImageTarget",
+                schema: "user");
         }
     }
 }

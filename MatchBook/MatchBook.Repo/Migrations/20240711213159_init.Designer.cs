@@ -12,14 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MatchBook.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240616201530_JwtToken")]
-    partial class JwtToken
+    [Migration("20240711213159_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("user")
                 .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -37,7 +38,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("BooksId");
 
-                    b.ToTable("BookAuthorsJoinTable");
+                    b.ToTable("BookAuthorsJoinTable", "user");
                 });
 
             modelBuilder.Entity("ChatUsersJoinTable", b =>
@@ -52,120 +53,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("MembersId");
 
-                    b.ToTable("ChatUsersJoinTable");
-                });
-
-            modelBuilder.Entity("MatchBook.Domain.Models.ApplicationRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("ApplicationRole", (string)null);
-                });
-
-            modelBuilder.Entity("MatchBook.Domain.Models.ApplicationUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ImageId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RefreshTokenId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RegionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImageId")
-                        .IsUnique()
-                        .HasFilter("[ImageId] IS NOT NULL");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("RegionId");
-
-                    b.ToTable("ApplicationUser", (string)null);
+                    b.ToTable("ChatUsersJoinTable", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Author", b =>
@@ -186,7 +74,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Author", (string)null);
+                    b.ToTable("Author", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Book", b =>
@@ -241,7 +129,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Book", (string)null);
+                    b.ToTable("Book", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.BookPoint", b =>
@@ -274,7 +162,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("BookPoint", (string)null);
+                    b.ToTable("BookPoint", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.BookTitle", b =>
@@ -291,7 +179,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BookTitle", (string)null);
+                    b.ToTable("BookTitle", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Chat", b =>
@@ -308,7 +196,120 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Chat", (string)null);
+                    b.ToTable("Chat", "user");
+                });
+
+            modelBuilder.Entity("MatchBook.Domain.Models.Identity.ApplicationRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("ApplicationRole", "user");
+                });
+
+            modelBuilder.Entity("MatchBook.Domain.Models.Identity.ApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("RefreshTokenId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RegionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId")
+                        .IsUnique()
+                        .HasFilter("[ImageId] IS NOT NULL");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("RegionId");
+
+                    b.ToTable("ApplicationUser", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Image", b =>
@@ -341,7 +342,7 @@ namespace MatchBook.Infrastructure.Migrations
                     b.HasIndex("TargetId")
                         .IsUnique();
 
-                    b.ToTable("Image", (string)null);
+                    b.ToTable("Image", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.ImageTarget", b =>
@@ -364,7 +365,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ImageTarget", (string)null);
+                    b.ToTable("ImageTarget", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Message", b =>
@@ -391,7 +392,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Message", (string)null);
+                    b.ToTable("Message", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.RefreshToken", b =>
@@ -417,7 +418,7 @@ namespace MatchBook.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Region", b =>
@@ -443,7 +444,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Region", (string)null);
+                    b.ToTable("Region", "user");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Report", b =>
@@ -475,7 +476,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reports");
+                    b.ToTable("Reports", "user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -499,7 +500,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims", "user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -523,7 +524,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims", "user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
@@ -544,7 +545,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins", "user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
@@ -559,7 +560,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles", "user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -578,7 +579,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens", "user");
                 });
 
             modelBuilder.Entity("UserBookLikesJoinTable", b =>
@@ -593,7 +594,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserBookLikesJoinTable");
+                    b.ToTable("UserBookLikesJoinTable", "user");
                 });
 
             modelBuilder.Entity("UserFollowedAuthorsJoinTable", b =>
@@ -608,7 +609,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("FollowersId");
 
-                    b.ToTable("UserFollowedAuthorsJoinTable");
+                    b.ToTable("UserFollowedAuthorsJoinTable", "user");
                 });
 
             modelBuilder.Entity("UserFollowedTitlesJoinTable", b =>
@@ -623,7 +624,7 @@ namespace MatchBook.Infrastructure.Migrations
 
                     b.HasIndex("FollowersId");
 
-                    b.ToTable("UserFollowedTitlesJoinTable");
+                    b.ToTable("UserFollowedTitlesJoinTable", "user");
                 });
 
             modelBuilder.Entity("BookAuthorsJoinTable", b =>
@@ -649,28 +650,11 @@ namespace MatchBook.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("MembersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("MatchBook.Domain.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("MatchBook.Domain.Models.Image", "Image")
-                        .WithOne("User")
-                        .HasForeignKey("MatchBook.Domain.Models.ApplicationUser", "ImageId");
-
-                    b.HasOne("MatchBook.Domain.Models.Region", "Region")
-                        .WithMany("Users")
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Image");
-
-                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Book", b =>
@@ -691,7 +675,7 @@ namespace MatchBook.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", "User")
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", "User")
                         .WithMany("UserBooks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -715,6 +699,23 @@ namespace MatchBook.Infrastructure.Migrations
                     b.Navigation("Region");
                 });
 
+            modelBuilder.Entity("MatchBook.Domain.Models.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("MatchBook.Domain.Models.Image", "Image")
+                        .WithOne("User")
+                        .HasForeignKey("MatchBook.Domain.Models.Identity.ApplicationUser", "ImageId");
+
+                    b.HasOne("MatchBook.Domain.Models.Region", "Region")
+                        .WithMany("Users")
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
+
+                    b.Navigation("Region");
+                });
+
             modelBuilder.Entity("MatchBook.Domain.Models.Image", b =>
                 {
                     b.HasOne("MatchBook.Domain.Models.ImageTarget", "Target")
@@ -734,7 +735,7 @@ namespace MatchBook.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", "User")
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -747,7 +748,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             modelBuilder.Entity("MatchBook.Domain.Models.RefreshToken", b =>
                 {
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", "User")
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", "User")
                         .WithOne("RefreshToken")
                         .HasForeignKey("MatchBook.Domain.Models.RefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -758,7 +759,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             modelBuilder.Entity("MatchBook.Domain.Models.Report", b =>
                 {
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", "User")
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -769,7 +770,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("MatchBook.Domain.Models.ApplicationRole", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -778,7 +779,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -787,7 +788,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -796,13 +797,13 @@ namespace MatchBook.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("MatchBook.Domain.Models.ApplicationRole", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -811,7 +812,7 @@ namespace MatchBook.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -826,7 +827,7 @@ namespace MatchBook.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -841,7 +842,7 @@ namespace MatchBook.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("FollowersId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -856,20 +857,11 @@ namespace MatchBook.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MatchBook.Domain.Models.ApplicationUser", null)
+                    b.HasOne("MatchBook.Domain.Models.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("FollowersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("MatchBook.Domain.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Messages");
-
-                    b.Navigation("RefreshToken");
-
-                    b.Navigation("UserBooks");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.BookPoint", b =>
@@ -885,6 +877,15 @@ namespace MatchBook.Infrastructure.Migrations
             modelBuilder.Entity("MatchBook.Domain.Models.Chat", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("MatchBook.Domain.Models.Identity.ApplicationUser", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("RefreshToken");
+
+                    b.Navigation("UserBooks");
                 });
 
             modelBuilder.Entity("MatchBook.Domain.Models.Image", b =>

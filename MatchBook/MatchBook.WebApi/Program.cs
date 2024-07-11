@@ -9,11 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using MatchBook.App.Services.Auth;
 using MatchBook.App.Services;
 using MatchBook.App.Services.Token;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
-var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
+var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>()
+    ?? throw new Exception("Cannot get Database options");
 
 // Add services to the container.
 
@@ -25,13 +27,24 @@ builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerSche
 builder.Services.AddAuthorizationBuilder();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(databaseOptions.ConnectionString));
+    opt.UseSqlServer(databaseOptions.ConnectionString,
+   o => o.MigrationsHistoryTable(
+            tableName: HistoryRepository.DefaultTableName,
+            schema: "user")));
+
+builder.Services.AddDbContext<AdminDbContext>(opt =>
+    opt.UseSqlServer(databaseOptions.ConnectionString,
+            o => o.MigrationsHistoryTable(
+            tableName: HistoryRepository.DefaultTableName,
+            schema: "admin")));
+
 
 builder.Services.AddIdentity(configuration);
 builder.Services.AddJWTAuthentication(configuration);
 
 builder.Services.AddScoped<RegionRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthService, AuthAdminService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddMediatR(config =>

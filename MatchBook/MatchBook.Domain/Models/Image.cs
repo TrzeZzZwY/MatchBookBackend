@@ -1,4 +1,6 @@
-﻿namespace MatchBook.Domain.Models;
+﻿using MatchBook.Domain.Models.Identity;
+
+namespace MatchBook.Domain.Models;
 
 public class Image
 {

@@ -1,6 +1,7 @@
 ﻿using MatchBook.Domain.Exceptions;
 using MatchBook.Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -20,7 +21,7 @@ public class TokenService : ITokenService
     {
         _jwtOptions = jwtOptions.Get(JwtBearerDefaults.AuthenticationScheme);
     }
-    public string CreateAccessToken(ApplicationUser user, IEnumerable<string> roles)
+    public string CreateAccessToken(IdentityUser<int> user, IEnumerable<string> roles)
     {
         var descriptor = new SecurityTokenDescriptor();
         var handler = new JsonWebTokenHandler();

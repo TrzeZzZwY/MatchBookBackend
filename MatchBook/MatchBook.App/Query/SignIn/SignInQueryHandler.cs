@@ -6,15 +6,17 @@ namespace MatchBook.App.Query.SignIn;
 
 public class RefreshTokenQueryHandler : IRequestHandler<SignInQuery, AuthJwt>
 {
-    private readonly IAuthService _authService;
+    private readonly IEnumerable<IAuthService> _authServices;
 
-    public RefreshTokenQueryHandler(IAuthService authService)
+    public RefreshTokenQueryHandler(IEnumerable<IAuthService> authServices)
     {
-        _authService = authService;
+        _authServices = authServices;
     }
 
     public async Task<AuthJwt> Handle(SignInQuery request, CancellationToken cancellationToken)
     {
-        return await _authService.Login(request.Login, request.Password);
+        return await _authServices
+            .FirstOrDefault(e => e.CanHandle(request.Role))
+            .Login(request.Login, request.Password);
     }
 }

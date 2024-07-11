@@ -1,6 +1,7 @@
 ﻿using MatchBook.App.Command.CreateUser;
 using MatchBook.App.Query.RefreshToken;
 using MatchBook.App.Query.SignIn;
+using MatchBook.WebApi.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,27 +10,28 @@ namespace MatchBook.WebApi.Controllers.Auth
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthAdminController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public AuthController(IMediator mediator)
+        public AuthAdminController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] SignInQuery request)
+        public async Task<IActionResult> Login([FromBody] SignInRequest request)
         {
             try
             {
-                var response = await _mediator.Send(new SignInQuery
-                {
-                    Login = request.Login,
-                    Password = request.Password,
-                    Role = Domain.Enums.ApplicationRole.user
-                });
+                var response = await _mediator.Send(
+                    new SignInQuery
+                    {
+                        Login = request.Login,
+                        Password = request.Password,
+                        Role = Domain.Enums.ApplicationRole.admin
+                    });
                 return Ok(response);
             }
             catch (Exception ex)
@@ -40,7 +42,7 @@ namespace MatchBook.WebApi.Controllers.Auth
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] CreateUserCommand request)
+        public async Task<IActionResult> Register([FromBody] CreateAdminCommand request)
         {
             try
             {
@@ -50,7 +52,7 @@ namespace MatchBook.WebApi.Controllers.Auth
                     { 
                         Login = request.Email,
                         Password = request.Password,
-                        Role = Domain.Enums.ApplicationRole.user
+                        Role = Domain.Enums.ApplicationRole.admin
                     });
                 return Ok(response);
             }
