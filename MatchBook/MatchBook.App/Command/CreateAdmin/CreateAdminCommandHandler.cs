@@ -19,7 +19,7 @@ public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand>
     {
         var user = new ApplicationAdmin
         {
-            UserName = request.NickName,
+            UserName = request.Name,
             Email = request.Email
         };
 

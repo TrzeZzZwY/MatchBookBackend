@@ -28,7 +28,7 @@ namespace MatchBook.WebApi.Controllers.Auth
                 var response = await _mediator.Send(
                     new SignInQuery
                     {
-                        Login = request.Login,
+                        Login = request.Email,
                         Password = request.Password,
                         Role = Domain.Enums.ApplicationRole.admin
                     });

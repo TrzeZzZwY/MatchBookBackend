@@ -5,7 +5,7 @@ namespace MatchBook.App.Command.CreateUser;
 
 public class CreateAdminCommand : IRequest
 {
-    public required string NickName { get; init; }
+    public required string Name { get; init; }
 
     public required string Email { get; init; }
 

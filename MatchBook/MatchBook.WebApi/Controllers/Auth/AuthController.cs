@@ -1,6 +1,7 @@
 ﻿using MatchBook.App.Command.CreateUser;
 using MatchBook.App.Query.RefreshToken;
 using MatchBook.App.Query.SignIn;
+using MatchBook.WebApi.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,13 @@ namespace MatchBook.WebApi.Controllers.Auth
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] SignInQuery request)
+        public async Task<IActionResult> Login([FromBody] SignInRequest request)
         {
             try
             {
                 var response = await _mediator.Send(new SignInQuery
                 {
-                    Login = request.Login,
+                    Login = request.Email,
                     Password = request.Password,
                     Role = Domain.Enums.ApplicationRole.user
                 });
