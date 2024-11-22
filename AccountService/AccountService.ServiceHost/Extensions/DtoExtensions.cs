@@ -9,9 +9,11 @@ public static class DtoExtensions
     {
         return new GetUserResponse
         {
+            Id = result.Id,
             Email = result.Email,
             FirtName = result.FirstName,
-            LastName = result.LastName
+            LastName = result.LastName,
+            BirthDate = result.BirthDate
         };
     }
 }

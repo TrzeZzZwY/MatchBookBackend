@@ -9,4 +9,6 @@ public record RegisterUserRequest
     public required string LastName { get; init; }
 
     public required string Password { get; init; }
+
+    public required DateTime BithDate { get; init; }
 }

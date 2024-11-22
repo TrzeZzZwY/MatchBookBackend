@@ -23,9 +23,11 @@ public class GetUserHandler : IRequestHandler<GetUserCommand, Result<GetUserResu
             null :
             new GetUserResult
             {
+                Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FistName,
-                LastName = user.LastName
+                LastName = user.LastName,
+                BirthDate = user.BirthDate
             };
     }
 }

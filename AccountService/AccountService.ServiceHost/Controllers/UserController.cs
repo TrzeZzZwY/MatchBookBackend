@@ -29,7 +29,8 @@ public class UserController : ControllerBase
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            Password = request.Password
+            Password = request.Password,
+            BirthDate = request.BithDate
         };
 
         var result = await _mediator.Send(command, cancellation);
@@ -75,7 +76,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{userId:int}")]
-    public async Task<ActionResult<GetUserResponse>> GetManyUsers([FromRoute] int userId, CancellationToken cancellation)
+    public async Task<ActionResult<GetUserResponse>> GetUser([FromRoute] int userId, CancellationToken cancellation)
     {
         var command = new GetUserCommand
         {

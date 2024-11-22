@@ -26,7 +26,8 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<R
             FistName = request.FirstName,
             LastName = request.LastName,
             Email = request.Email,
-            UserName = request.FirstName
+            UserName = request.FirstName,
+            BirthDate = request.BirthDate
         };
 
         var createResult = await _userManager.CreateAsync(user, request.Password);

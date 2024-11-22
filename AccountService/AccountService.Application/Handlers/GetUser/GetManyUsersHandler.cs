@@ -21,7 +21,12 @@ public class GetManyUsersHandler : IRequestHandler<GetManyUsersCommand, Result<L
         var users = await _databaseContext.Users
             .Skip((request.paginationOptions.PageNumber - 1) * request.paginationOptions.PageSize)
             .Take(request.paginationOptions.PageSize)
-            .Select(e => new GetUserResult { Email = e.Email, FirstName = e.FistName, LastName = e.LastName })
+            .Select(e => new GetUserResult { 
+                Id = e.Id,
+                Email = e.Email,
+                FirstName = e.FistName,
+                LastName = e.LastName,
+                BirthDate = e.BirthDate })
             .ToListAsync(cancellationToken);
 
 
