@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookService.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241102140927_InitMigration")]
+    [Migration("20241108191704_InitMigration")]
     partial class InitMigration
     {
         /// <inheritdoc />
@@ -77,9 +77,6 @@ namespace BookService.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BookPointId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -120,6 +117,45 @@ namespace BookService.Repository.Migrations
                     b.ToTable("BookPoint", "MB");
                 });
 
+            modelBuilder.Entity("BookService.Domain.Models.UserBookItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BookPointId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookReferenceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookPointId");
+
+                    b.HasIndex("BookReferenceId");
+
+                    b.ToTable("UserBookItem", "MB");
+                });
+
             modelBuilder.Entity("BookAuthorsJoinTable", b =>
                 {
                     b.HasOne("BookService.Domain.Models.Book", null)
@@ -133,6 +169,28 @@ namespace BookService.Repository.Migrations
                         .HasForeignKey("AuthorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BookService.Domain.Models.UserBookItem", b =>
+                {
+                    b.HasOne("BookService.Domain.Models.BookPoint", "BookPoint")
+                        .WithMany()
+                        .HasForeignKey("BookPointId");
+
+                    b.HasOne("BookService.Domain.Models.Book", "BookReference")
+                        .WithMany("BookItems")
+                        .HasForeignKey("BookReferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BookPoint");
+
+                    b.Navigation("BookReference");
+                });
+
+            modelBuilder.Entity("BookService.Domain.Models.Book", b =>
+                {
+                    b.Navigation("BookItems");
                 });
 #pragma warning restore 612, 618
         }
