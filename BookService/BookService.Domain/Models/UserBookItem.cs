@@ -30,6 +30,8 @@ public class UserBookItem
 
     public BookPoint? BookPoint { get; set; }
 
+    public List<UserLikesBooks>? UserLikes { get; set; }
+
     public Result<UserBookItem, Error> UpdateStatus(UserBookItemStatus newStatus)
     {
         Result result = (Status, newStatus) switch

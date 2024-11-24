@@ -1,7 +1,9 @@
-﻿using BookService.Domain.Common;
+﻿using BookService.Application.Extensions;
+using BookService.Domain.Common;
 using BookService.Repository;
 using CSharpFunctionalExtensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookService.Application.Handlers.GetUserBookItems;
 public class GetManyUserBookItemsHandler : IRequestHandler<GetManyUserBookItemsCommand, Result<List<GetUserBookResult>, Error>>
@@ -21,10 +23,8 @@ public class GetManyUserBookItemsHandler : IRequestHandler<GetManyUserBookItemsC
             .Skip((request.PaginationOptions.PageNumber - 1) * request.PaginationOptions.PageSize)
             .Take(request.PaginationOptions.PageSize);
 
-        return userBooks.ToList().Select(e => new GetUserBookResult
-        {
-            Id = e.Id,
-            Status = e.Status
-        }).ToList();
+        userBooks = userBooks.Include(e => e.BookReference);
+
+        return userBooks.ToList().Select(e => e.ToHandlerResult()).ToList();
     }
 }

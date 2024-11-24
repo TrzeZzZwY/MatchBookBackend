@@ -18,6 +18,8 @@ public class DatabaseContext : DbContext
 
     public DbSet<UserBookItem> UserBookItems => Set<UserBookItem>();
 
+    public DbSet<UserLikesBooks> UserLikesBooks => Set<UserLikesBooks>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

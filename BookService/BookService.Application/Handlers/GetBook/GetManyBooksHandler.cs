@@ -29,11 +29,6 @@ public class GetManyBooksHandler : IRequestHandler<GetManyBooksCommand, Result<L
             .Skip((request.PaginationOptions.PageNumber - 1) * request.PaginationOptions.PageSize)
             .Take(request.PaginationOptions.PageSize);
 
-        return books.ToList().Select(e => new GetBookResult
-        {
-            Id = e.Id,
-            Title = e.Title,
-            Authors = e.Authors?.Select(a => a.ToHandlerResult()).ToList()
-        }).ToList();
+        return books.ToList().Select(e => e.ToHandlerResult()).ToList();
     }
 }

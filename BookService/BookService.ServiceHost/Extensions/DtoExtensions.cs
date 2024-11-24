@@ -62,7 +62,10 @@ public static class DtoExtensions
         return new UserBookItemResponse
         {
             Id = result.Id,
-            Status = result.Status
+            UserId = result.UserId,
+            Description = result.Description,
+            Status = result.Status,
+            BookReference = result.BookReference.ToDto(),
         };
     }
 }
