@@ -9,4 +9,6 @@ public class BookResponse
     public required string Title { get; init; }
 
     public IEnumerable<AuthorResponse>? Authors { get; init; }
+
+    public required bool IsRemoved { get; init; }
 }

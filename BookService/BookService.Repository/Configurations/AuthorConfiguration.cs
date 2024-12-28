@@ -16,6 +16,7 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
         builder.Property(e => e.LastName);
         builder.Property(e => e.Country);
         builder.Property(e => e.YearOfBirth);
+        builder.Property(e => e.IsDeleted).HasDefaultValue(false);
         builder.HasMany(e => e.AuthorBooks).WithMany(e => e.Authors).UsingEntity("BookAuthorsJoinTable");
     }
 }

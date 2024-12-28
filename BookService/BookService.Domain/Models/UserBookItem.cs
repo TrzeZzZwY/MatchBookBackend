@@ -37,7 +37,7 @@ public class UserBookItem
         Result result = (Status, newStatus) switch
         {
             (_, UserBookItemStatus.BookPoint) => BookPointId is null ?
-                Result.Failure($"Cannot set status {UserBookItemStatus.BookPoint} unless bookPoint is assigned") : Result.Success(),
+                Result.Failure($"Cannot set status {UserBookItemStatus.BookPoint} unless bookPointId is assigned") : Result.Success(),
 
             (UserBookItemStatus.Unspecified, UserBookItemStatus.ActivePublic) or
             (UserBookItemStatus.Unspecified, UserBookItemStatus.ActivePrivate) or
@@ -53,8 +53,9 @@ public class UserBookItem
 
             (UserBookItemStatus.Disabled, UserBookItemStatus.Removed) or
             (UserBookItemStatus.Disabled, UserBookItemStatus.ActivePublic) or
-            (UserBookItemStatus.Disabled, UserBookItemStatus.ActivePrivate) => Result.Success(),
+            (UserBookItemStatus.Disabled, UserBookItemStatus.ActivePrivate) or
 
+            (UserBookItemStatus.BookPoint, UserBookItemStatus.Removed) => Result.Success(),
             (_, _) => Result.Failure($"Cannot change status from {Status} to {newStatus}")
 
         };

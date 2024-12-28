@@ -10,7 +10,8 @@ public static class BookExtensions
         {
             Id = book.Id,
             Title = book.Title,
-            Authors = book.Authors?.Select(a => a.ToHandlerResult()).ToList()
+            Authors = book.Authors?.Select(a => a.ToHandlerResult()).ToList(),
+            IsRemoved = book.IsDeleted
         };
     }
 }

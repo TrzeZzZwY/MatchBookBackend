@@ -19,11 +19,17 @@ public class GetManyUserBookItemsHandler : IRequestHandler<GetManyUserBookItemsC
     {
         var userBooks = _databaseContext.UserBookItems.AsQueryable();
 
+        if (request.ItemStatus is not null)
+            userBooks = userBooks.Where(e => e.Status == request.ItemStatus);
+
         userBooks = userBooks
             .Skip((request.PaginationOptions.PageNumber - 1) * request.PaginationOptions.PageSize)
             .Take(request.PaginationOptions.PageSize);
 
-        userBooks = userBooks.Include(e => e.BookReference);
+        if (request.InludeAuthorDetails)
+            userBooks = userBooks.Include(e => e.BookReference).ThenInclude(e => e.Authors);
+        else
+            userBooks = userBooks.Include(e => e.BookReference);
 
         return userBooks.ToList().Select(e => e.ToHandlerResult()).ToList();
     }

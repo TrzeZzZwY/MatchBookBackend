@@ -18,6 +18,9 @@ public class GetManyAuthorsHandler : IRequestHandler<GetManyAuthorsCommand, Resu
     {
         var authors = _databaseContext.Authors.AsQueryable();
 
+        if (!request.ShowRemoved)
+            authors = authors.Where(e => e.IsDeleted == false);
+
         authors = authors
             .Skip((request.PaginationOptions.PageNumber - 1) * request.PaginationOptions.PageSize)
             .Take(request.PaginationOptions.PageSize);

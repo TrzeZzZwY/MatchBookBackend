@@ -12,7 +12,8 @@ public static class AuthorExtensions
             FistName = author.FirstName,
             LastName = author.LastName,
             Country = author.Country,
-            YearOfBirth = author.YearOfBirth
+            YearOfBirth = author.YearOfBirth,
+            IsRemoved = author.IsDeleted
         };
     }
 }
