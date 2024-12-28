@@ -1,5 +1,6 @@
 ﻿using BookService.Application.Extensions;
 using BookService.Domain.Common;
+using BookService.Domain.Models;
 using BookService.Repository;
 using CSharpFunctionalExtensions;
 using MediatR;
@@ -18,6 +19,9 @@ public class GetManyBooksHandler : IRequestHandler<GetManyBooksCommand, Result<L
     public async Task<Result<List<GetBookResult>, Error>> Handle(GetManyBooksCommand request, CancellationToken cancellationToken)
     {
         var books = _databaseContext.Books.AsQueryable();
+
+        if (!request.ShowRemoved)
+            books = books.Where(e => e.IsDeleted == false);
 
         if (request.Title is not null)
             books = books.Where(e => e.Title.Contains(request.Title));

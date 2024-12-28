@@ -14,6 +14,8 @@ public class BookPoint
 
     public int? Capacity { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public DateTime CreateDate { get; set; }
 
     public DateTime? UpdateDate { get; set; }

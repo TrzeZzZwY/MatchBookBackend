@@ -11,5 +11,6 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
 
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Title);
+        builder.Property(e => e.IsDeleted).HasDefaultValue(false);
     }
 }

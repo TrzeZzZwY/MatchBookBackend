@@ -11,4 +11,6 @@ public class AuthorResponse
     public required string Country { get; init; }
 
     public required int YearOfBirth { get; init; }
+
+    public required bool IsRemoved { get; init; }
 }

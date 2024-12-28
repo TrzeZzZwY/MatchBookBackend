@@ -12,5 +12,7 @@ public class Author
 
     public int YearOfBirth { get; set; }
 
+    public bool IsDeleted { get; set; } 
+
     public List<Book> AuthorBooks { get; set; }
 }

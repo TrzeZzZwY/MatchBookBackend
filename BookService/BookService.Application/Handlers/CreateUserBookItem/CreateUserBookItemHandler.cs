@@ -16,6 +16,8 @@ public class CreateUserBookItemHandler : IRequestHandler<CreateUserBookItemComma
 
     public async Task<Result<CreateUserBookItemResult, Error>> Handle(CreateUserBookItemCommand request, CancellationToken cancellationToken)
     {
+        var bookReference = await _databaseContext.Books.FindAsync([request.BookReferenceId], cancellationToken);
+        if (bookReference is null) return new Error($"Book not found for bookReferenceId: {request.BookReferenceId}", ErrorReason.BadRequest);
 
         var userBookItem = new UserBookItem
         {

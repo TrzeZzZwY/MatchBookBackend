@@ -6,4 +6,5 @@ namespace BookService.Application.Handlers.GetAuthor;
 public class GetManyAuthorsCommand : IRequest<Result<List<GetAuthorResult>,Error>>
 {
     public required PaginationOptions PaginationOptions { get; init; }
+    public bool ShowRemoved { get; set; } = false;
 }

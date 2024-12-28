@@ -1,6 +1,5 @@
 ﻿using BookService.Application.Handlers.GetMatches;
 using BookService.Domain.Common;
-using BookService.ServiceHost.Controllers.Dto.UserLikes;
 using BookService.ServiceHost.Controllers.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

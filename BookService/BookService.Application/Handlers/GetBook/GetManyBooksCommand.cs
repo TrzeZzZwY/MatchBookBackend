@@ -10,4 +10,6 @@ public class GetManyBooksCommand: IRequest<Result<List<GetBookResult>,Error>>
     public string? Title { get; init; }
 
     public bool InludeAuthorDetails { get; init; } = false;
+
+    public bool ShowRemoved { get; set; } = false;
 }

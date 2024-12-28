@@ -31,7 +31,8 @@ public static class DtoExtensions
             FirstName = result.FistName,
             LastName = result.LastName,
             YearOfBirth = result.YearOfBirth,
-            Country = result.Country
+            Country = result.Country,
+            IsRemoved = result.IsRemoved
         };
     }
 
@@ -41,7 +42,8 @@ public static class DtoExtensions
         {
             Id = result.Id,
             Title = result.Title,
-            Authors = result.Authors?.Select(a => a.ToDto())
+            Authors = result.Authors?.Select(a => a.ToDto()),
+            IsRemoved = result.IsRemoved
         };
     }
 

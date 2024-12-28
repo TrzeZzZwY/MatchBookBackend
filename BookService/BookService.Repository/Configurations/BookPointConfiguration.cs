@@ -15,6 +15,7 @@ public class BookPointConfiguration : IEntityTypeConfiguration<BookPoint>
         builder.Property(e => e.Lat);
         builder.Property(e => e.Long);
         builder.Property(e => e.Capacity).IsRequired(false);
+        builder.Property(e => e.IsDeleted).HasDefaultValue(false);
         builder.Property(e => e.CreateDate);
         builder.Property(e => e.UpdateDate);
     }

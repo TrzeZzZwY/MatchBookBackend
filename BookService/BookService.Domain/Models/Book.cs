@@ -6,6 +6,8 @@ public class Book
 
     public string Title { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public List<Author> Authors { get; set; }
 
     public List<UserBookItem> BookItems { get; set; }
