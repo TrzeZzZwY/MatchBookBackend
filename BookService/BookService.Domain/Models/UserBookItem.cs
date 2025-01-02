@@ -26,11 +26,15 @@ public class UserBookItem
 
     public int? BookPointId { get; set; }
 
+    public int? ItemImageId { get; set; }
+
     public Book BookReference { get; set; }
 
     public BookPoint? BookPoint { get; set; }
 
     public List<UserLikesBooks>? UserLikes { get; set; }
+
+    public Image? ItemImage { get; set; }
 
     public Result<UserBookItem, Error> UpdateStatus(UserBookItemStatus newStatus)
     {

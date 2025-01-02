@@ -12,5 +12,7 @@ public class GetUserBookResult
 
     public required UserBookItemStatus Status { get; set; }
 
+    public int? ImageId { get; set; }
+
     public required GetBookResult BookReference { get; set; }
 }

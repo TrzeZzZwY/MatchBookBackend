@@ -14,4 +14,6 @@ public class CreateUserBookItemCommand : IRequest<Result<CreateUserBookItemResul
     public required int BookReferenceId { get; init; }
 
     public int? BookPointId { get; init; }
+
+    public int? ImageId { get; set; }
 }

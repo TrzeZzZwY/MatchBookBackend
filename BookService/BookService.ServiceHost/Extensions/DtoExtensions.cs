@@ -7,19 +7,21 @@ using BookService.ServiceHost.Controllers.Dto.Book;
 using BookService.ServiceHost.Controllers.Dto.BookPoint;
 using BookService.ServiceHost.Controllers.Dto.UserItemBook;
 using BookService.Application.Handlers.GetUserBookItems;
+using BookService.Domain.Common;
 
 namespace BookService.ServiceHost.Extensions;
 
 public static class DtoExtensions
 {
-    public static PaginationWrapper<T> GetPaginationResult<T>(this IEnumerable<T> collection, int PageNumber, int PageSize)
+    public static PaginationWrapper<E> GetPaginationResult<T, E>(this PaginatedResult<T> paginatedResult, Func<T,E> mapper)
     {
-        return new PaginationWrapper<T>
+        return new PaginationWrapper<E>
         {
-            Items = collection,
-            ItemsCount = collection.Count(),
-            PageNumber = PageNumber,
-            PageSize = PageSize
+            Items = paginatedResult.Items.Select(e => mapper(e)),
+            ItemsCount = paginatedResult.Items.Count(),
+            PageNumber = paginatedResult.PageNumber,
+            PageSize = paginatedResult.PageSize,
+            TotalItemsCount = paginatedResult.TotalItemsCount
         };
     }
 
@@ -68,6 +70,7 @@ public static class DtoExtensions
             Description = result.Description,
             Status = result.Status,
             BookReference = result.BookReference.ToDto(),
+            ImageId = result.ImageId
         };
     }
 }

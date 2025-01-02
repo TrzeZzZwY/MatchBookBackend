@@ -25,7 +25,7 @@ public class BookPointController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddBookPoint([FromBody] BookPointRequest request, CancellationToken cancellation)
+    public async Task<ActionResult<CreateEntityResponse>> AddBookPoint([FromBody] BookPointRequest request, CancellationToken cancellation)
     {
         var command = new CreateBookPointCommand
         {
@@ -37,19 +37,10 @@ public class BookPointController : ControllerBase
 
         var result = await _mediator.Send(command, cancellation);
 
-        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created);
+        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created, new CreateEntityResponse { Id = result.Value.BookPointId });
 
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet]
@@ -72,23 +63,12 @@ public class BookPointController : ControllerBase
 
         if (result.IsSuccess)
         {
-            var bookPoints = result.Value
-                .Select(e => e.ToDto())
-                .GetPaginationResult(pageNumber, pageSize);
+            var bookPoints = result.Value.GetPaginationResult(DtoExtensions.ToDto);
 
             return StatusCode(StatusCodes.Status200OK, bookPoints);
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet("{bookPointId:int}")]
@@ -108,16 +88,7 @@ public class BookPointController : ControllerBase
                 Ok(result.Value.ToDto());
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpDelete("{bookPointId:int}")]
@@ -136,16 +107,7 @@ public class BookPointController : ControllerBase
             return NoContent();
         }
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpPut("{bookPointId:int}")]
@@ -167,15 +129,6 @@ public class BookPointController : ControllerBase
             return Ok();
         }
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 }

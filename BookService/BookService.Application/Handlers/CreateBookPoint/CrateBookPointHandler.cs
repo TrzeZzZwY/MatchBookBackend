@@ -18,7 +18,7 @@ public class CrateBookPointHandler : IRequestHandler<CreateBookPointCommand, Res
     {
         var bookPoint = _databaseContext.BookPoints.Where(e => e.Lat == request.Lat && e.Long == request.Long).FirstOrDefault();
 
-        if (bookPoint is not null) 
+        if (bookPoint is not null)
             return new Error($"BookPoint for given Lat: {request.Lat} and Long: {request.Long} already exist", ErrorReason.BadRequest);
 
         bookPoint = new BookPoint
@@ -33,6 +33,6 @@ public class CrateBookPointHandler : IRequestHandler<CreateBookPointCommand, Res
         await _databaseContext.AddAsync(bookPoint, cancellationToken);
         await _databaseContext.SaveChangesAsync(cancellationToken);
 
-        return new CreateBookPointResult();    
+        return new CreateBookPointResult { BookPointId = bookPoint.Id };
     }
 }
