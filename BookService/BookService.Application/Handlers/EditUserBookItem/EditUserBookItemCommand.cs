@@ -16,4 +16,6 @@ public class EditUserBookItemCommand : IRequest<Result<EditUserBookItemResult, E
     public required int BookReferenceId { get; init; }
 
     public int? BookPointId { get; init; }
+
+    public int? ImageId { get; set; }
 }

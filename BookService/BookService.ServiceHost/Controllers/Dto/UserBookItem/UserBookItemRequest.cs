@@ -13,4 +13,6 @@ public class UserBookItemRequest
     public required int BookReferenceId { get; set; }
 
     public int? BookPointId { get; set; }
+
+    public int? ImageId { get; set; }
 }

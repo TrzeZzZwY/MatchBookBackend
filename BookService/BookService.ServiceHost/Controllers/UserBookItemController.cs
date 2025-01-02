@@ -1,12 +1,16 @@
-﻿using BookService.Application.Handlers.CreateUserBookItem;
+﻿using BookService.Application.Extensions;
+using BookService.Application.Handlers.CreateImage;
+using BookService.Application.Handlers.CreateUserBookItem;
 using BookService.Application.Handlers.DeleteUserBookItem;
 using BookService.Application.Handlers.EditUserBookItem;
+using BookService.Application.Handlers.GetImage;
 using BookService.Application.Handlers.GetUserBookItems;
 using BookService.Application.Handlers.GetUserLikes;
 using BookService.Application.Handlers.ToggleLike;
 using BookService.Domain.Common;
 using BookService.ServiceHost.Controllers.Dto;
 using BookService.ServiceHost.Controllers.Dto.BookPoint;
+using BookService.ServiceHost.Controllers.Dto.UserBookItem;
 using BookService.ServiceHost.Controllers.Dto.UserItemBook;
 using BookService.ServiceHost.Controllers.Dto.UserLikes;
 using BookService.ServiceHost.Extensions;
@@ -26,8 +30,51 @@ public class UserBookItemController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpPost("image")]
+    public async Task<ActionResult<ImageResponse>> AddItemImage(IFormFile file, CancellationToken cancellation)
+    {
+        var imageType = file.ContentType.ToImageType();
+        if (imageType == ImageType.UNKNOWN) return BadRequest(new GenericError { Description = "Invalid ContentType" });
+
+        using var ms = new MemoryStream();
+        file.CopyTo(ms);
+
+        var command = new CreateImageCommand
+        {
+            FileName = file.FileName,
+            ByteArray = ms.ToArray(),
+            ImageType = imageType
+        };
+        var result = await _mediator.Send(command, cancellation);
+
+        if (result.IsSuccess)
+        {
+            return StatusCode(StatusCodes.Status201Created, new ImageResponse { ImageId = result.Value.ImageId });
+        }
+        return result.Error.ToErrorResult();
+    }
+
+    [HttpGet("image/{imageId:int}")]
+    public async Task<ActionResult> GetImage([FromRoute] int imageId, CancellationToken cancellation)
+    {
+        var command = new GetImageCommand
+        {
+            ImageId = imageId
+        };
+        var result = await _mediator.Send(command, cancellation);
+
+        if (result.IsSuccess)
+        {
+            return result.Value is null ?
+                NotFound() :
+                File(result.Value.ImageBytes, result.Value.ImageType.ToContentType());
+        }
+
+        return result.Error.ToErrorResult();
+    }
+
     [HttpPost]
-    public async Task<ActionResult> AddUserItemBook([FromBody] UserBookItemRequest request, CancellationToken cancellation)
+    public async Task<ActionResult<CreateEntityResponse>> AddUserItemBook([FromBody] UserBookItemRequest request, CancellationToken cancellation)
     {
         var command = new CreateUserBookItemCommand
         {
@@ -35,24 +82,15 @@ public class UserBookItemController : ControllerBase
             BookReferenceId = request.BookReferenceId,
             BookPointId = request.BookPointId,
             Description = request.Description,
-            Status = request.Status
+            Status = request.Status,
+            ImageId = request.ImageId
         };
 
         var result = await _mediator.Send(command, cancellation);
 
-        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created);
+        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created, new CreateEntityResponse { Id = result.Value.UserBookItemId });
 
-
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet]
@@ -77,23 +115,12 @@ public class UserBookItemController : ControllerBase
 
         if (result.IsSuccess)
         {
-            var bookPoints = result.Value
-                .Select(e => e.ToDto())
-                .GetPaginationResult(pageNumber, pageSize);
+            var bookPoints = result.Value.GetPaginationResult(DtoExtensions.ToDto);
 
             return StatusCode(StatusCodes.Status200OK, bookPoints);
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet("{userBookItemId:int}")]
@@ -113,16 +140,7 @@ public class UserBookItemController : ControllerBase
                 Ok(result.Value.ToDto());
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpDelete("{userBookItemId:int}")]
@@ -142,16 +160,7 @@ public class UserBookItemController : ControllerBase
             return NoContent();
         }
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpPut("{userBookItemId:int}")]
@@ -166,7 +175,8 @@ public class UserBookItemController : ControllerBase
             Status = request.Status,
             BookReferenceId = request.BookReferenceId,
             UserId = request.UserId,
-            BookPointId = request.BookPointId
+            BookPointId = request.BookPointId,
+            ImageId = request.ImageId
         };
         var result = await _mediator.Send(command, cancellation);
 
@@ -175,16 +185,7 @@ public class UserBookItemController : ControllerBase
             return Ok();
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpPost("toggle-like")]
@@ -197,16 +198,7 @@ public class UserBookItemController : ControllerBase
         if (result.IsSuccess)
             return StatusCode(StatusCodes.Status200OK);
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet("get-like")]
@@ -232,21 +224,12 @@ public class UserBookItemController : ControllerBase
             var userLikes = new UserLikesResponse
             {
                 UserId = result.Value.UserId,
-                UserLikes = result.Value.Items.Select(e => e.ToDto()).GetPaginationResult(pageNumber, pageSize)
+                UserLikes = result.Value.Items.GetPaginationResult(DtoExtensions.ToDto)
             };
 
             return StatusCode(StatusCodes.Status200OK, userLikes);
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 }

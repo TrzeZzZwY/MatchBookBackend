@@ -12,7 +12,8 @@ public static class UserBookItemsExtensions
             Status = item.Status,
             Description = item.Description,
             UserId = item.UserId,
-            BookReference = item.BookReference.ToHandlerResult()
+            BookReference = item.BookReference?.ToHandlerResult(),
+            ImageId = item.ItemImageId
         };
     }
 }

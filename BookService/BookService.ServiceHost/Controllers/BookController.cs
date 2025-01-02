@@ -22,7 +22,7 @@ public class BookController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddBook([FromBody] BookRequest request, CancellationToken cancellation)
+    public async Task<ActionResult<CreateEntityResponse>> AddBook([FromBody] BookRequest request, CancellationToken cancellation)
     {
         var command = new CreateBookCommand
         {
@@ -32,19 +32,9 @@ public class BookController : ControllerBase
 
         var result = await _mediator.Send(command, cancellation);
 
-        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created);
+        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created, new CreateEntityResponse { Id = result.Value.BookId });
 
-
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet]
@@ -53,7 +43,8 @@ public class BookController : ControllerBase
         [FromQuery] int pageNumber = 1,
         [FromQuery] bool showRemoved = false,
         [FromQuery] bool includeBookAuthors = false,
-        [FromQuery] string? title = null)
+        [FromQuery] string? title = null,
+        [FromQuery] int? authorId = null)
     {
         var command = new GetManyBooksCommand
         {
@@ -64,30 +55,19 @@ public class BookController : ControllerBase
             },
             InludeAuthorDetails = includeBookAuthors,
             Title = title,
-            ShowRemoved = showRemoved
+            ShowRemoved = showRemoved,
+            AuthorId = authorId
         };
 
         var result = await _mediator.Send(command, cancellation);
 
         if (result.IsSuccess)
         {
-            var books = result.Value
-                .Select(e => e.ToDto())
-                .GetPaginationResult(pageNumber, pageSize);
-
+            var books = result.Value.GetPaginationResult(DtoExtensions.ToDto);
             return StatusCode(StatusCodes.Status200OK, books);
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet("{bookId:int}")]
@@ -108,16 +88,7 @@ public class BookController : ControllerBase
                 Ok(result.Value.ToDto());
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpDelete("{bookId:int}")]
@@ -136,16 +107,7 @@ public class BookController : ControllerBase
             return NoContent();
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpPut("{bookId:int}")]
@@ -166,15 +128,6 @@ public class BookController : ControllerBase
             return Ok();
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 }

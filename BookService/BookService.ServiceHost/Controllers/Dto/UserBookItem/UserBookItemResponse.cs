@@ -13,6 +13,8 @@ public class UserBookItemResponse
 
     public required string Description { get; set; }
 
+    public int? ImageId { get; set; }
+
     public required BookResponse BookReference { get; set; }
 
 }

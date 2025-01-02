@@ -5,11 +5,13 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookService.ServiceHost", "BookService.ServiceHost\BookService.ServiceHost.csproj", "{018637CD-F7BC-4370-91BA-9E23BB2710F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookService.Application", "BookService.Application\BookService.Application.csproj", "{1FCC82A1-6438-406F-91D1-FD463E9B7F9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookService.Application", "BookService.Application\BookService.Application.csproj", "{1FCC82A1-6438-406F-91D1-FD463E9B7F9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookService.Repository", "BookService.Repository\BookService.Repository.csproj", "{EE6C4EE3-83BF-4A60-83B4-6632D59DFB5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookService.Repository", "BookService.Repository\BookService.Repository.csproj", "{EE6C4EE3-83BF-4A60-83B4-6632D59DFB5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookService.Domain", "BookService.Domain\BookService.Domain.csproj", "{C56E7709-4DC2-4C98-8537-2BFF8E467B99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookService.Domain", "BookService.Domain\BookService.Domain.csproj", "{C56E7709-4DC2-4C98-8537-2BFF8E467B99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{368561EF-2127-4C6E-8E65-E4EA06E8E485}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

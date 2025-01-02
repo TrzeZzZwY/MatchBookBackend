@@ -21,6 +21,7 @@ public class GetUserLikesHandler : IRequestHandler<GetUserLikesCommand, Result<G
 
         var items = _databaseContext.UserBookItems.Where(e => itemsId.Contains(e.Id));
 
+        var total = items.Count();
         items = items
         .Skip((request.PaginationOptions.PageNumber - 1) * request.PaginationOptions.PageSize)
         .Take(request.PaginationOptions.PageSize);
@@ -30,7 +31,7 @@ public class GetUserLikesHandler : IRequestHandler<GetUserLikesCommand, Result<G
         return new GetUserLikesResult
         {
             UserId = request.UserId,
-            Items = items.ToList().Select(e => e.ToHandlerResult()).ToList()
+            Items = request.PaginationOptions.ToPaginatedResult(items.ToList().Select(e => e.ToHandlerResult()).ToList(), total)
         };
     }
 }

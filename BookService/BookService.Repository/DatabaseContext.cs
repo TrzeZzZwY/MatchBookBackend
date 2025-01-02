@@ -20,6 +20,8 @@ public class DatabaseContext : DbContext
 
     public DbSet<UserLikesBooks> UserLikesBooks => Set<UserLikesBooks>();
 
+    public DbSet<Image> Images => Set<Image>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

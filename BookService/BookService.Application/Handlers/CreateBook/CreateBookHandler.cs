@@ -34,6 +34,6 @@ public class CreateBookHandler : IRequestHandler<CreateBookCommand, Result<Creat
 
         await _databaseContext.Books.AddAsync(book, cancellationToken);
         await _databaseContext.SaveChangesAsync(cancellationToken);
-        return new CreateBookResult();
+        return new CreateBookResult { BookId = book.Id };
     }
 }

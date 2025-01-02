@@ -19,12 +19,16 @@ public class CreateUserBookItemHandler : IRequestHandler<CreateUserBookItemComma
         var bookReference = await _databaseContext.Books.FindAsync([request.BookReferenceId], cancellationToken);
         if (bookReference is null) return new Error($"Book not found for bookReferenceId: {request.BookReferenceId}", ErrorReason.BadRequest);
 
+        var imageReference = await _databaseContext.Images.FindAsync([request.ImageId], cancellationToken);
+        if (imageReference is null) return new Error($"Image not found for ImageId: {request.ImageId}", ErrorReason.BadRequest);
+
         var userBookItem = new UserBookItem
         {
             UserId = request.UserId,
             Description = request.Description,
             CreateDate = DateTime.UtcNow,
-            BookReferenceId = request.BookReferenceId
+            BookReferenceId = request.BookReferenceId,
+            ItemImageId = request.ImageId
         };
 
         if (request.BookPointId != null)
@@ -36,6 +40,6 @@ public class CreateUserBookItemHandler : IRequestHandler<CreateUserBookItemComma
         await _databaseContext.AddAsync(userBookItem, cancellationToken);
         await _databaseContext.SaveChangesAsync(cancellationToken);
 
-        return new CreateUserBookItemResult();
+        return new CreateUserBookItemResult { UserBookItemId = userBookItem.Id };
     }
 }

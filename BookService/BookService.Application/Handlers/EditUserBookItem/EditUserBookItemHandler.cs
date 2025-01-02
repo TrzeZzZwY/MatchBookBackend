@@ -21,15 +21,22 @@ public class EditUserBookItemHandler : IRequestHandler<EditUserBookItemCommand, 
             var item = await _databaseContext.UserBookItems.FindAsync([request.UserBookItemId], cancellationToken);
             if (item is null) return new Error($"UserBookItem not found for userBookItemId: {request.UserBookItemId}", ErrorReason.BadRequest);
 
-            var updateStatusResult = item.UpdateStatus(request.Status);
-            if (updateStatusResult.IsFailure) return updateStatusResult.Error;
+            if (item.Status != request.Status)
+            {
+                var updateStatusResult = item.UpdateStatus(request.Status);
+                if (updateStatusResult.IsFailure) return updateStatusResult.Error;
+            }
 
             var bookReference = await _databaseContext.Books.FindAsync([request.BookReferenceId], cancellationToken);
             if (bookReference is null) return new Error($"Book not found for bookReferenceId: {request.BookReferenceId}", ErrorReason.BadRequest);
 
+            var imageReference = await _databaseContext.Images.FindAsync([request.ImageId], cancellationToken);
+            if (imageReference is null) return new Error($"Image not found for ImageId: {request.ImageId}", ErrorReason.BadRequest);
+
             item.Description = request.Description;
             item.BookReferenceId = request.BookReferenceId;
             item.BookPointId = request.BookPointId;
+            item.ItemImageId = request.ImageId;
 
             await _databaseContext.SaveChangesAsync(cancellationToken);
             return new EditUserBookItemResult();

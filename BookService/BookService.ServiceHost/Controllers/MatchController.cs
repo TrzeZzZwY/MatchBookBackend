@@ -4,6 +4,7 @@ using BookService.ServiceHost.Controllers.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BookService.ServiceHost.Controllers.Dto.Match;
+using BookService.ServiceHost.Extensions;
 
 namespace BookService.ServiceHost.Controllers;
 
@@ -46,15 +47,6 @@ public class MatchController : ControllerBase
             return StatusCode(StatusCodes.Status200OK, userLikes);
         };
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 }

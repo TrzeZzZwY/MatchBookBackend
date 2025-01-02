@@ -19,5 +19,9 @@ public class UserBookItemConfiguration : IEntityTypeConfiguration<UserBookItem>
         builder.Property(e => e.UpdateDate);
         builder.HasOne(e => e.BookReference).WithMany(e => e.BookItems);
         builder.HasOne(e => e.BookPoint).WithMany().IsRequired(false);
+        builder.HasOne(e => e.ItemImage)
+            .WithOne(e => e.UserBookItem)
+            .HasForeignKey<UserBookItem>(e => e.ItemImageId)
+            .IsRequired(false);
     }
 }

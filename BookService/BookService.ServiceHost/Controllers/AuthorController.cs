@@ -8,8 +8,6 @@ using BookService.ServiceHost.Controllers.Dto.Author;
 using BookService.ServiceHost.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BookService.ServiceHost.Controllers;
 
@@ -25,7 +23,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddAuthor([FromBody] AuthorRequest request, CancellationToken cancellation)
+    public async Task<ActionResult<CreateEntityResponse>> AddAuthor([FromBody] AuthorRequest request, CancellationToken cancellation)
     {
         var command = new CreateAuthorCommand
         {
@@ -37,23 +35,15 @@ public class AuthorController: ControllerBase
 
         var result = await _mediator.Send(command, cancellation);
 
-        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created);
+        if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created, new CreateEntityResponse { Id = result.Value.AuthorId});
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet]
     public async Task<ActionResult<PaginationWrapper<AuthorResponse>>> GetAllAuthors(
         CancellationToken cancellation,
+        [FromQuery] string? authorName = null,
         [FromQuery] bool showRemoved = false,
         [FromQuery] int pageSize = 50,
         [FromQuery] int pageNumber = 1)
@@ -65,30 +55,20 @@ public class AuthorController: ControllerBase
                 PageSize = pageSize,
                 PageNumber = pageNumber
             },
-            ShowRemoved = showRemoved
+            ShowRemoved = showRemoved,
+            AuthorName = authorName
         };
 
         var result = await _mediator.Send(command, cancellation);
 
         if (result.IsSuccess)
         {
-            var authors = result.Value
-                .Select(e => e.ToDto())
-                .GetPaginationResult(pageNumber, pageSize);
+            var authors = result.Value.GetPaginationResult(DtoExtensions.ToDto);
 
             return StatusCode(StatusCodes.Status200OK, authors);
         }
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet("{authorId:int}")]
@@ -110,16 +90,7 @@ public class AuthorController: ControllerBase
                 Ok(result.Value.ToDto());
         }
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpDelete("{authorId:int}")]
@@ -138,16 +109,7 @@ public class AuthorController: ControllerBase
             return NoContent();
         }
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpPut("{authorId:int}")]
@@ -169,15 +131,6 @@ public class AuthorController: ControllerBase
             return Ok();
         }
 
-        var error = new GenericError
-        {
-            Description = result.Error.Description
-        };
-
-        return result.Error.Reason switch
-        {
-            ErrorReason.BadRequest => StatusCode(StatusCodes.Status400BadRequest, error),
-            _ => StatusCode(StatusCodes.Status500InternalServerError, error)
-        };
+        return result.Error.ToErrorResult();
     }
 }
