@@ -15,4 +15,6 @@ public class RegisterUserCommand: IRequest<Result<RegisterUserResult,Error>>
     public required string Password { get; init; }
 
     public required DateTime  BirthDate { get; set; }
+
+    public required Region Region { get; set; }
 }

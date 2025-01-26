@@ -1,5 +1,6 @@
 ﻿using AccountService.Domain.Common;
 using AccountService.Domain.Models;
+using AccountService.Repository;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -8,23 +9,26 @@ namespace AccountService.Application.Handlers.GetUser;
 
 public class GetUserHandler : IRequestHandler<GetUserCommand, Result<GetUserResult?, Error>>
 {
-    private readonly UserManager<UserAccount> _userManager;
+    private readonly UserManager<Account> _userManager;
+    private readonly DatabaseContext _context;
 
-    public GetUserHandler(UserManager<UserAccount> userManager)
+    public GetUserHandler(UserManager<Account> userManager,
+        DatabaseContext context)
     {
         _userManager = userManager;
+        _context = context;
     }
 
     public async Task<Result<GetUserResult?, Error>> Handle(GetUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Id.ToString());
+        var user = await _context.UserAccounts.FindAsync([request.Id], cancellationToken);
 
         return user is null ?
             null :
             new GetUserResult
             {
                 Id = user.Id,
-                Email = user.Email,
+                Email = user.Account.Email!,
                 FirstName = user.FistName,
                 LastName = user.LastName,
                 BirthDate = user.BirthDate

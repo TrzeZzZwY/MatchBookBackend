@@ -6,13 +6,36 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AccountService.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class AddAccounts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "MB");
+
+            migrationBuilder.CreateTable(
+                name: "AdminAccount",
+                schema: "MB",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AccountCreatorId = table.Column<int>(type: "int", nullable: true),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminAccount", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdminAccount_AdminAccount_AccountCreatorId",
+                        column: x => x.AccountCreatorId,
+                        principalSchema: "MB",
+                        principalTable: "AdminAccount",
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
@@ -31,7 +54,7 @@ namespace AccountService.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "UserAccount",
                 schema: "MB",
                 columns: table => new
                 {
@@ -39,24 +62,13 @@ namespace AccountService.Repository.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Region = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_UserAccount", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,6 +92,49 @@ namespace AccountService.Repository.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                schema: "MB",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserAccountId = table.Column<int>(type: "int", nullable: true),
+                    AdminAccountId = table.Column<int>(type: "int", nullable: true),
+                    RefreshTokenId = table.Column<int>(type: "int", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_AdminAccount_AdminAccountId",
+                        column: x => x.AdminAccountId,
+                        principalSchema: "MB",
+                        principalTable: "AdminAccount",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_UserAccount_UserAccountId",
+                        column: x => x.UserAccountId,
+                        principalSchema: "MB",
+                        principalTable: "UserAccount",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -176,6 +231,37 @@ namespace AccountService.Repository.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                schema: "MB",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshToken_AspNetUsers_AccountId",
+                        column: x => x.AccountId,
+                        principalSchema: "MB",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminAccount_AccountCreatorId",
+                schema: "MB",
+                table: "AdminAccount",
+                column: "AccountCreatorId",
+                unique: true,
+                filter: "[AccountCreatorId] IS NOT NULL");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 schema: "MB",
@@ -215,12 +301,35 @@ namespace AccountService.Repository.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_AdminAccountId",
+                schema: "MB",
+                table: "AspNetUsers",
+                column: "AdminAccountId",
+                unique: true,
+                filter: "[AdminAccountId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserAccountId",
+                schema: "MB",
+                table: "AspNetUsers",
+                column: "UserAccountId",
+                unique: true,
+                filter: "[UserAccountId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "MB",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_AccountId",
+                schema: "MB",
+                table: "RefreshToken",
+                column: "AccountId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -247,11 +356,23 @@ namespace AccountService.Repository.Migrations
                 schema: "MB");
 
             migrationBuilder.DropTable(
+                name: "RefreshToken",
+                schema: "MB");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles",
                 schema: "MB");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers",
+                schema: "MB");
+
+            migrationBuilder.DropTable(
+                name: "AdminAccount",
+                schema: "MB");
+
+            migrationBuilder.DropTable(
+                name: "UserAccount",
                 schema: "MB");
         }
     }

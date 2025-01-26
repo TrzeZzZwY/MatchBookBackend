@@ -23,6 +23,94 @@ namespace AccountService.Repository.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AccountService.Domain.Models.Account", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AdminAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RefreshTokenId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("UserAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminAccountId")
+                        .IsUnique()
+                        .HasFilter("[AdminAccountId] IS NOT NULL");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("UserAccountId")
+                        .IsUnique()
+                        .HasFilter("[UserAccountId] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", "MB");
+                });
+
             modelBuilder.Entity("AccountService.Domain.Models.AccountRole", b =>
                 {
                     b.Property<int>("Id")
@@ -53,7 +141,7 @@ namespace AccountService.Repository.Migrations
                     b.ToTable("AspNetRoles", "MB");
                 });
 
-            modelBuilder.Entity("AccountService.Domain.Models.UserAccount", b =>
+            modelBuilder.Entity("AccountService.Domain.Models.AdminAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,22 +149,11 @@ namespace AccountService.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccessFailedCount")
+                    b.Property<int?>("AccountCreatorId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<string>("FistName")
                         .IsRequired()
@@ -86,50 +163,69 @@ namespace AccountService.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                    b.HasKey("Id");
 
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                    b.HasIndex("AccountCreatorId")
+                        .IsUnique()
+                        .HasFilter("[AccountCreatorId] IS NOT NULL");
 
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.ToTable("AdminAccount", "MB");
+                });
 
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+            modelBuilder.Entity("AccountService.Domain.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("PasswordHash")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                    b.ToTable("RefreshToken", "MB");
+                });
 
-                    b.ToTable("AspNetUsers", "MB");
+            modelBuilder.Entity("AccountService.Domain.Models.UserAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FistName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Region")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserAccount", "MB");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -235,6 +331,41 @@ namespace AccountService.Repository.Migrations
                     b.ToTable("AspNetUserTokens", "MB");
                 });
 
+            modelBuilder.Entity("AccountService.Domain.Models.Account", b =>
+                {
+                    b.HasOne("AccountService.Domain.Models.AdminAccount", "AdminAccount")
+                        .WithOne("Account")
+                        .HasForeignKey("AccountService.Domain.Models.Account", "AdminAccountId");
+
+                    b.HasOne("AccountService.Domain.Models.UserAccount", "UserAccount")
+                        .WithOne("Account")
+                        .HasForeignKey("AccountService.Domain.Models.Account", "UserAccountId");
+
+                    b.Navigation("AdminAccount");
+
+                    b.Navigation("UserAccount");
+                });
+
+            modelBuilder.Entity("AccountService.Domain.Models.AdminAccount", b =>
+                {
+                    b.HasOne("AccountService.Domain.Models.AdminAccount", "AccountCreator")
+                        .WithOne()
+                        .HasForeignKey("AccountService.Domain.Models.AdminAccount", "AccountCreatorId");
+
+                    b.Navigation("AccountCreator");
+                });
+
+            modelBuilder.Entity("AccountService.Domain.Models.RefreshToken", b =>
+                {
+                    b.HasOne("AccountService.Domain.Models.Account", "Account")
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("AccountService.Domain.Models.RefreshToken", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("AccountService.Domain.Models.AccountRole", null)
@@ -246,7 +377,7 @@ namespace AccountService.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("AccountService.Domain.Models.UserAccount", null)
+                    b.HasOne("AccountService.Domain.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -255,7 +386,7 @@ namespace AccountService.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("AccountService.Domain.Models.UserAccount", null)
+                    b.HasOne("AccountService.Domain.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -270,7 +401,7 @@ namespace AccountService.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AccountService.Domain.Models.UserAccount", null)
+                    b.HasOne("AccountService.Domain.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -279,10 +410,28 @@ namespace AccountService.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("AccountService.Domain.Models.UserAccount", null)
+                    b.HasOne("AccountService.Domain.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AccountService.Domain.Models.Account", b =>
+                {
+                    b.Navigation("RefreshToken")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AccountService.Domain.Models.AdminAccount", b =>
+                {
+                    b.Navigation("Account")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AccountService.Domain.Models.UserAccount", b =>
+                {
+                    b.Navigation("Account")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

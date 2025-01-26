@@ -1,7 +1,10 @@
-﻿using AccountService.Application.Handlers.GetUser;
+﻿using AccountService.Application.Handlers.CreateToken;
+using AccountService.Application.Handlers.GetUser;
+using AccountService.Application.Handlers.LoginUser;
 using AccountService.Application.Handlers.RegisterUser;
 using AccountService.Domain.Common;
 using AccountService.ServiceHost.Controllers.Dto;
+using AccountService.ServiceHost.Controllers.Dto.LoginUser;
 using AccountService.ServiceHost.Controllers.Dto.RegisterUser;
 using AccountService.ServiceHost.Extensions;
 using MediatR;
@@ -30,7 +33,8 @@ public class UserController : ControllerBase
             FirstName = request.FirstName,
             LastName = request.LastName,
             Password = request.Password,
-            BirthDate = request.BithDate
+            BirthDate = request.BithDate,
+            Region = request.Region
         };
 
         var result = await _mediator.Send(command, cancellation);
@@ -41,6 +45,34 @@ public class UserController : ControllerBase
         {
             _ => StatusCode(StatusCodes.Status500InternalServerError)
         };
+    }
+
+    [HttpPost]
+    [Route("Login")]
+    public async Task<ActionResult<LoginUserResponse>> Login([FromBody] LoginUserRequest request, CancellationToken cancellation)
+    {
+        var loginCommand = new LoginUserCommand
+        {
+            Email = request.Email,
+            Password = request.Password
+        };
+
+        var loginResult = await _mediator.Send(loginCommand, cancellation);
+
+        if (loginResult.IsSuccess)
+        {
+            var getTokenCommand = new CreateTokenCommand
+            {
+                AccountId = loginResult.Value.AccountId
+            };
+
+            var getTokenResult = await _mediator.Send(getTokenCommand, cancellation);
+            if(getTokenResult.IsSuccess)
+                return StatusCode(StatusCodes.Status201Created,
+                    new LoginUserResponse { Token = getTokenResult.Value.Token, RefreshToken = getTokenResult.Value.RefreshToken });
+        }
+
+        return loginResult.Error.ToErrorResult();
     }
 
     [HttpGet]
@@ -55,7 +87,7 @@ public class UserController : ControllerBase
             }
         };
 
-        var result = await _mediator.Send(command, new());
+        var result = await _mediator.Send(command, cancellation);
 
         if (result.IsSuccess)
         {
@@ -87,7 +119,7 @@ public class UserController : ControllerBase
 
         if (result.IsSuccess)
             return Ok(result.Value.ToDto());
-        
+
 
         return result.Error.Reason switch
         {

@@ -18,17 +18,16 @@ public class GetManyUsersHandler : IRequestHandler<GetManyUsersCommand, Result<L
     public async Task<Result<List<GetUserResult>, Error>> Handle(GetManyUsersCommand request, CancellationToken cancellationToken)
     {
         //Todo: apply filters in future
-        var users = await _databaseContext.Users
+        var users = await _databaseContext.UserAccounts
             .Skip((request.paginationOptions.PageNumber - 1) * request.paginationOptions.PageSize)
             .Take(request.paginationOptions.PageSize)
             .Select(e => new GetUserResult { 
                 Id = e.Id,
-                Email = e.Email,
+                Email = e.Account.Email!,
                 FirstName = e.FistName,
                 LastName = e.LastName,
                 BirthDate = e.BirthDate })
             .ToListAsync(cancellationToken);
-
 
         return users;
     }

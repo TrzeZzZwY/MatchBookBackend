@@ -1,7 +1,5 @@
-﻿using AccountService.Domain.Common;
-
-namespace AccountService.Domain.Models;
-public class UserAccount
+﻿namespace AccountService.Domain.Models;
+public class AdminAccount
 {
     public int Id { get; set; }
 
@@ -9,9 +7,9 @@ public class UserAccount
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public int? AccountCreatorId { get; set; }
 
-    public Region Region { get; set; }
+    public AdminAccount? AccountCreator { get; set; }
 
     public int AccountId { get; set; }
 

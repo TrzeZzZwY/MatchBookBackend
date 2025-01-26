@@ -1,4 +1,6 @@
-﻿namespace AccountService.ServiceHost.Controllers.Dto.RegisterUser;
+﻿using AccountService.Domain.Common;
+
+namespace AccountService.ServiceHost.Controllers.Dto.RegisterUser;
 
 public record RegisterUserRequest
 {
@@ -11,4 +13,6 @@ public record RegisterUserRequest
     public required string Password { get; init; }
 
     public required DateTime BithDate { get; init; }
+
+    public required Region Region { get; init; }
 }
