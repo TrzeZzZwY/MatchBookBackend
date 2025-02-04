@@ -42,7 +42,7 @@ public class CreateImageHandler : IRequestHandler<CreateImageCommand, Result<Cre
 
             return new CreateImageResult { ImageId = image.Id };
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             return new Error(e.Message + "\n" + e.InnerException, ErrorReason.InternalError);
         }

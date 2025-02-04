@@ -21,12 +21,12 @@ public class GetManyAuthorsHandler : IRequestHandler<GetManyAuthorsCommand, Resu
         if (!request.ShowRemoved)
             authors = authors.Where(e => e.IsDeleted == false);
 
-        if(request.AuthorName is not null)
+        if (request.AuthorName is not null)
         {
             var authorFilters = request.AuthorName.Split(" ", StringSplitOptions.RemoveEmptyEntries);
             if (authorFilters.Length != 0)
                 authors = authors.Where(auth => authorFilters.All(f => auth.FirstName.Contains(f) || auth.LastName.Contains(f)));
-            
+
         }
 
         var total = authors.Count();
@@ -34,7 +34,7 @@ public class GetManyAuthorsHandler : IRequestHandler<GetManyAuthorsCommand, Resu
             .Skip((request.PaginationOptions.PageNumber - 1) * request.PaginationOptions.PageSize)
             .Take(request.PaginationOptions.PageSize);
 
-        return  request.PaginationOptions.ToPaginatedResult(
+        return request.PaginationOptions.ToPaginatedResult(
             authors.ToList().Select(e => e.ToHandlerResult()).ToList(),
             total
             );

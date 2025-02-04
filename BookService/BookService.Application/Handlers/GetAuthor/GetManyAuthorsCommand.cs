@@ -3,7 +3,7 @@ using CSharpFunctionalExtensions;
 using MediatR;
 
 namespace BookService.Application.Handlers.GetAuthor;
-public class GetManyAuthorsCommand : IRequest<Result<PaginatedResult<GetAuthorResult>,Error>>
+public class GetManyAuthorsCommand : IRequest<Result<PaginatedResult<GetAuthorResult>, Error>>
 {
     public required PaginationOptions PaginationOptions { get; init; }
 

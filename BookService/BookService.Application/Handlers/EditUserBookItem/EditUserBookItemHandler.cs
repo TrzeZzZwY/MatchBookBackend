@@ -1,5 +1,4 @@
 ﻿using BookService.Domain.Common;
-using BookService.Domain.Models;
 using BookService.Repository;
 using CSharpFunctionalExtensions;
 using MediatR;

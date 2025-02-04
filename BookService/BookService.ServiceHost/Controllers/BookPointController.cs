@@ -4,12 +4,11 @@ using BookService.Application.Handlers.EditBookPoint;
 using BookService.Application.Handlers.GetBookPoint;
 using BookService.Domain.Common;
 using BookService.ServiceHost.Controllers.Dto;
-using BookService.ServiceHost.Controllers.Dto.Book;
 using BookService.ServiceHost.Controllers.Dto.BookPoint;
 using BookService.ServiceHost.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BookService.ServiceHost.Controllers;
 
@@ -25,6 +24,7 @@ public class BookPointController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CreateEntityResponse>> AddBookPoint([FromBody] BookPointRequest request, CancellationToken cancellation)
     {
         var command = new CreateBookPointCommand
@@ -44,6 +44,7 @@ public class BookPointController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<PaginationWrapper<BookPointResponse>>> GetManyBookPoints(CancellationToken cancellation,
         [FromQuery] int pageSize = 50,
         [FromQuery] int pageNumber = 1,
@@ -72,6 +73,7 @@ public class BookPointController : ControllerBase
     }
 
     [HttpGet("{bookPointId:int}")]
+    [Authorize]
     public async Task<ActionResult<BookPointResponse>> GetById([FromRoute] int bookPointId, CancellationToken cancellation)
     {
         var command = new GetBookPointCommand
@@ -92,6 +94,7 @@ public class BookPointController : ControllerBase
     }
 
     [HttpDelete("{bookPointId:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> SoftDelete([FromRoute] int bookPointId, CancellationToken cancellation)
     {
         //Only for admin
@@ -111,6 +114,7 @@ public class BookPointController : ControllerBase
     }
 
     [HttpPut("{bookPointId:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Edit([FromRoute] int bookPointId, [FromBody] BookPointRequest request, CancellationToken cancellation)
     {
         var command = new EditBookPointCommand

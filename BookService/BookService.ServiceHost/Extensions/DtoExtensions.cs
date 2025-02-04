@@ -1,13 +1,13 @@
-﻿using BookService.Application.Handlers.GetBook;
-using BookService.Application.Handlers.GetAuthor;
-using BookService.Application.Handlers.GetBookPoint;
-using BookService.ServiceHost.Controllers.Dto;
+﻿using BookService.ServiceHost.Controllers.Dto;
 using BookService.ServiceHost.Controllers.Dto.Author;
 using BookService.ServiceHost.Controllers.Dto.Book;
 using BookService.ServiceHost.Controllers.Dto.BookPoint;
 using BookService.ServiceHost.Controllers.Dto.UserItemBook;
-using BookService.Application.Handlers.GetUserBookItems;
 using BookService.Domain.Common;
+using BookService.Application.Handlers.GetAuthor;
+using BookService.Application.Handlers.GetBook;
+using BookService.Application.Handlers.GetBookPoint;
+using BookService.Application.Handlers.GetUserBookItems;
 
 namespace BookService.ServiceHost.Extensions;
 

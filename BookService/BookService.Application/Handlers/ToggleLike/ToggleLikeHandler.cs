@@ -30,9 +30,11 @@ public class ToggleLikeHandler : IRequestHandler<ToggleLikeCommand, Result<Toggl
             _databaseContext.UserLikesBooks.Remove(existing);
         else
             await _databaseContext.UserLikesBooks.AddAsync(
-                new UserLikesBooks { 
+                new UserLikesBooks
+                {
                     UserBookItemId = request.UserBookItemId,
-                    UserId = request.UserId },
+                    UserId = request.UserId
+                },
                 cancellationToken);
 
         await _databaseContext.SaveChangesAsync(cancellationToken);

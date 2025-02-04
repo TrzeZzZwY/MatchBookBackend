@@ -6,27 +6,25 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookService.Application.Handlers.GetUserBookItems;
-public class GetManyUserBookItemsHandler : IRequestHandler<GetManyUserBookItemsCommand, Result<PaginatedResult<GetUserBookResult>, Error>>
+public class GetAllUserItemsHandler : IRequestHandler<GetAllUserItemsCommand, Result<PaginatedResult<GetUserBookResult>, Error>>
 {
     private readonly DatabaseContext _databaseContext;
 
-    public GetManyUserBookItemsHandler(DatabaseContext databaseContext)
+    public GetAllUserItemsHandler(DatabaseContext databaseContext)
     {
         _databaseContext = databaseContext;
     }
 
-    public async Task<Result<PaginatedResult<GetUserBookResult>, Error>> Handle(GetManyUserBookItemsCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedResult<GetUserBookResult>, Error>> Handle(GetAllUserItemsCommand request, CancellationToken cancellationToken)
     {
         var userBooks = _databaseContext.UserBookItems.AsQueryable();
 
-        if (request.Region is not null)
-            userBooks = userBooks.Where(e => e.Region == request.Region);
+        userBooks = userBooks.Where(e => e.UserId == request.UserId);
 
-        if (request.ItemStatus is not null)
-            userBooks = userBooks.Where(e => e.Status == request.ItemStatus);
-
-        if (request.UserId is not null)
-            userBooks = userBooks.Where(e => e.UserId == request.UserId);
+        if (request.UserId != request.RequestUserId)
+            userBooks = userBooks.Where(e => e.Status == UserBookItemStatus.ActivePublic);
+        else
+            userBooks = userBooks.Where(e => e.Status == UserBookItemStatus.ActivePublic || e.Status == UserBookItemStatus.ActivePrivate);
 
         if (request.Title is not null)
         {
@@ -40,10 +38,7 @@ public class GetManyUserBookItemsHandler : IRequestHandler<GetManyUserBookItemsC
             .Skip((request.PaginationOptions.PageNumber - 1) * request.PaginationOptions.PageSize)
             .Take(request.PaginationOptions.PageSize);
 
-        if (request.InludeAuthorDetails)
-            userBooks = userBooks.Include(e => e.BookReference).ThenInclude(e => e.Authors);
-        else
-            userBooks = userBooks.Include(e => e.BookReference);
+        userBooks = userBooks.Include(e => e.BookReference).ThenInclude(e => e.Authors);
 
         return request.PaginationOptions.ToPaginatedResult(
             userBooks.ToList().Select(e => e.ToHandlerResult()).ToList(),

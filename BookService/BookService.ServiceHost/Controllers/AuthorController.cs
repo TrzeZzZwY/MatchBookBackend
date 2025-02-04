@@ -7,6 +7,7 @@ using BookService.ServiceHost.Controllers.Dto;
 using BookService.ServiceHost.Controllers.Dto.Author;
 using BookService.ServiceHost.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookService.ServiceHost.Controllers;
@@ -23,6 +24,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "User")]
     public async Task<ActionResult<CreateEntityResponse>> AddAuthor([FromBody] AuthorRequest request, CancellationToken cancellation)
     {
         var command = new CreateAuthorCommand
@@ -41,6 +43,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<PaginationWrapper<AuthorResponse>>> GetAllAuthors(
         CancellationToken cancellation,
         [FromQuery] string? authorName = null,
@@ -72,6 +75,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpGet("{authorId:int}")]
+    [Authorize]
     public async Task<ActionResult<AuthorResponse>> GetAuthorById(
         [FromRoute] int authorId,
         CancellationToken cancellation)
@@ -94,6 +98,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpDelete("{authorId:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> SoftDeleteAuthor([FromRoute] int authorId, CancellationToken cancellation)
     {
         //TODO: Only for admin
@@ -113,6 +118,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpPut("{authorId:int}")]
+    [Authorize(Roles = "User")]
     public async Task<ActionResult> EditAuthor([FromRoute] int authorId, [FromBody] AuthorRequest request, CancellationToken cancellation)
     {
         //Only for admin

@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BookService.ServiceHost.Controllers.Dto.Match;
 using BookService.ServiceHost.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookService.ServiceHost.Controllers;
 
@@ -20,11 +21,13 @@ public class MatchController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "User")]
     public async Task<ActionResult> GetMatchesForUser(CancellationToken cancellation,
                 [FromQuery] int pageSize = 50,
-                [FromQuery] int pageNumber = 1,
-                [FromQuery] int userId = 1)
+                [FromQuery] int pageNumber = 1)
     {
+        var userId = User.GetId();
+        if (userId is null) return StatusCode(StatusCodes.Status400BadRequest);
         var command = new GetMatchesCommand
         {
             PaginationOptions = new PaginationOptions
@@ -32,7 +35,7 @@ public class MatchController : ControllerBase
                 PageNumber = pageNumber,
                 PageSize = pageSize
             },
-            UserId = userId
+            UserId = (int)userId
         };
 
         var result = await _mediator.Send(command, cancellation);

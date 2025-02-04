@@ -5,7 +5,7 @@ using MediatR;
 namespace BookService.Application.Handlers.EditUserBookItem;
 public class EditUserBookItemCommand : IRequest<Result<EditUserBookItemResult, Error>>
 {
-    public required int UserBookItemId { get; set; }
+    public required int UserBookItemId { get; init; }
 
     public required int UserId { get; init; }
 
@@ -17,5 +17,7 @@ public class EditUserBookItemCommand : IRequest<Result<EditUserBookItemResult, E
 
     public int? BookPointId { get; init; }
 
-    public int? ImageId { get; set; }
+    public int? ImageId { get; init; }
+
+    public required Region Region { get; init; }
 }

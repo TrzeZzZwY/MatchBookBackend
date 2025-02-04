@@ -28,7 +28,7 @@ public class EditBookHandler : IRequestHandler<EditBookCommand, Result<EditBookR
 
             if (request.AuthorsId is not null)
             {
-               List<Author> authors = new List<Author>();
+                List<Author> authors = new List<Author>();
                 foreach (var authorId in request.AuthorsId)
                 {
                     var author = await _databaseContext.Authors.FindAsync(authorId);
@@ -42,7 +42,7 @@ public class EditBookHandler : IRequestHandler<EditBookCommand, Result<EditBookR
             await _databaseContext.SaveChangesAsync(cancellationToken);
             return new EditBookResult();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             return new Error(e.Message, ErrorReason.BadRequest);
         }

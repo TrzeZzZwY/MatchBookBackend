@@ -29,7 +29,7 @@ public class EditBookPointHandler : IRequestHandler<EditBookPointCommand, Result
             await _databaseContext.SaveChangesAsync(cancellationToken);
             return new EditBookPointResult();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             return new Error(e.Message, ErrorReason.InternalError);
         }

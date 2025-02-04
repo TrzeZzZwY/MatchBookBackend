@@ -36,6 +36,8 @@ public class UserBookItem
 
     public Image? ItemImage { get; set; }
 
+    public Region Region { get; set; }
+
     public Result<UserBookItem, Error> UpdateStatus(UserBookItemStatus newStatus)
     {
         Result result = (Status, newStatus) switch

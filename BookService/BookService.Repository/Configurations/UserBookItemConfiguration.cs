@@ -15,6 +15,7 @@ public class UserBookItemConfiguration : IEntityTypeConfiguration<UserBookItem>
         builder.Property(e => e.UserId);
         builder.Property(e => e.Description);
         builder.Property(e => e.Status);
+        builder.Property(e => e.Region);
         builder.Property(e => e.CreateDate);
         builder.Property(e => e.UpdateDate);
         builder.HasOne(e => e.BookReference).WithMany(e => e.BookItems);

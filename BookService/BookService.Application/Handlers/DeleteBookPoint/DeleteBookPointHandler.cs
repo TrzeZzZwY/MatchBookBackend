@@ -26,7 +26,7 @@ public class DeleteBookPointHandler : IRequestHandler<DeleteBookPointCommand, Re
             await _databaseContext.SaveChangesAsync(cancellationToken);
             return new DeleteBookPointResult();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             return new Error(e.Message, ErrorReason.InternalError);
         }
