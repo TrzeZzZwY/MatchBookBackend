@@ -3,10 +3,13 @@ using AccountService.Domain.Models;
 using AccountService.Repository;
 using AccountService.ServiceHost.Extensions;
 using AccountService.ServiceHost.Utils;
+using Azure.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -100,6 +103,37 @@ using (var scope = app.Services.CreateScope())
     {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new AccountRole(role));
+    }
+
+    var accountManager = scope.ServiceProvider.GetRequiredService<UserManager<Account>>();
+    var email = "admin@matchbook.com";
+    var password = "1qazXSW@";
+    var firstName = "Adam";
+    var lastName = "Security";
+
+    if ((await accountManager.FindByEmailAsync(email)) is null)
+    {
+        var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+        var account = new Account
+        {
+            Email = email,
+            UserName = email,
+            CreateDate = DateTime.UtcNow
+        };
+        var createResult = await accountManager.CreateAsync(account, password);
+        var addToRoleResult = await accountManager.AddToRoleAsync(account, "Admin");
+
+        var admin = new AdminAccount
+        {
+            FistName = firstName,
+            LastName = lastName,
+            Account = account
+        };
+
+        var userEntity = await context.AdminAccounts.AddAsync(admin, new());
+        account.LinkAccountToAdmin(userEntity.Entity);
+
+        await context.SaveChangesAsync(new());
     }
 }
 

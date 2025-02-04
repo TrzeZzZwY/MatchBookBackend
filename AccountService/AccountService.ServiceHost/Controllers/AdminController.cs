@@ -1,39 +1,43 @@
 ﻿using AccountService.Application.Handlers.CreateToken;
-using AccountService.Application.Handlers.GetUser;
-using AccountService.Application.Handlers.LoginUser;
-using AccountService.Application.Handlers.RegisterUser;
+using AccountService.Application.Handlers.GetAdmin;
+using AccountService.Application.Handlers.LoginAdmin;
+using AccountService.Application.Handlers.RegisterAdmin;
 using AccountService.Domain.Common;
 using AccountService.ServiceHost.Controllers.Dto;
-using AccountService.ServiceHost.Controllers.Dto.RegisterUser;
+using AccountService.ServiceHost.Controllers.Dto.Admin;
 using AccountService.ServiceHost.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceHost.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class AdminController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public UserController(IMediator mediator)
+    public AdminController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpPost]
     [Route("Register")]
-    public async Task<ActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellation)
+    [Authorize("Admin")]
+    public async Task<ActionResult> Register([FromBody] RegisterAdminRequest request, CancellationToken cancellation)
     {
-        var command = new RegisterUserCommand
+        var userId = User.GetId();
+        if (userId is null) return StatusCode(StatusCodes.Status400BadRequest);
+
+        var command = new RegisterAdminCommand
         {
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
             Password = request.Password,
-            BirthDate = request.BithDate,
-            Region = request.Region
+            CreatedBy = (int)userId
         };
 
         var result = await _mediator.Send(command, cancellation);
@@ -48,9 +52,9 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("Login")]
-    public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginUserRequest request, CancellationToken cancellation)
+    public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginAdminRequest request, CancellationToken cancellation)
     {
-        var loginCommand = new LoginUserCommand
+        var loginCommand = new LoginAdminCommand
         {
             Email = request.Email,
             Password = request.Password
@@ -66,9 +70,10 @@ public class UserController : ControllerBase
             };
 
             var getTokenResult = await _mediator.Send(getTokenCommand, cancellation);
-            if(getTokenResult.IsSuccess)
+            if (getTokenResult.IsSuccess)
                 return StatusCode(StatusCodes.Status201Created,
                     new TokenResponse { Token = getTokenResult.Value.Token, RefreshToken = getTokenResult.Value.RefreshToken });
+
             return getTokenResult.Error.ToErrorResult();
         }
 
@@ -76,9 +81,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PaginationWrapper<GetUserResponse>>> GetManyUsers(CancellationToken cancellation, [FromQuery] int pageSize = 50, [FromQuery] int pageNumber = 1)
+    [Authorize("Admin")]
+    public async Task<ActionResult<PaginationWrapper<GetAdminResponse>>> GetManyAdmins(CancellationToken cancellation, [FromQuery] int pageSize = 50, [FromQuery] int pageNumber = 1)
     {
-        var command = new GetManyUsersCommand
+        var command = new GetManyAdminsCommand
         {
             paginationOptions = new PaginationOptions
             {
@@ -92,7 +98,7 @@ public class UserController : ControllerBase
         if (result.IsSuccess)
         {
             var users = result.Value.Select(e => e.ToDto());
-            return Ok(new PaginationWrapper<GetUserResponse>()
+            return Ok(new PaginationWrapper<GetAdminResponse>()
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
@@ -108,9 +114,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{userId:int}")]
-    public async Task<ActionResult<GetUserResponse>> GetUser([FromRoute] int userId, CancellationToken cancellation)
+    [Authorize("Admin")]
+    public async Task<ActionResult<GetAdminResponse>> GetAdmin([FromRoute] int userId, CancellationToken cancellation)
     {
-        var command = new GetUserCommand
+        var command = new GetAdminCommand
         {
             Id = userId
         };

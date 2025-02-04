@@ -1,4 +1,5 @@
 ﻿using AccountService.Application.Handlers.RefreshToken;
+using AccountService.ServiceHost.Controllers.Dto;
 using AccountService.ServiceHost.Controllers.Dto.Auth;
 using AccountService.ServiceHost.Extensions;
 using MediatR;
@@ -20,7 +21,7 @@ public class AuthController : ControllerBase
 
     [HttpPost("refresh")]
     [Authorize("Refresh")]
-    public async Task<ActionResult<GetTokenResponse>> Refresh([FromBody] RefreshTokenRequest request, CancellationToken cancellation)
+    public async Task<ActionResult<TokenResponse>> Refresh([FromBody] RefreshTokenRequest request, CancellationToken cancellation)
     {
         var token = GetTokenFormHeader();
         var command = new RefreshTokenCommand { ExpiredToken = token, RefreshToken = request.RefreshToken };
@@ -28,7 +29,7 @@ public class AuthController : ControllerBase
 
         if (result.IsFailure) return result.Error.ToErrorResult();
 
-        return Ok(new GetTokenResponse { Token = result.Value.Token, RefreshToken = result.Value.RefreshToken });
+        return Ok(new TokenResponse { Token = result.Value.Token, RefreshToken = result.Value.RefreshToken });
     }
 
     [HttpGet("OnlyValidToken")]

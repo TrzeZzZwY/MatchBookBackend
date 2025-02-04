@@ -31,7 +31,8 @@ public class GetUserHandler : IRequestHandler<GetUserCommand, Result<GetUserResu
                 Email = user.Account.Email!,
                 FirstName = user.FistName,
                 LastName = user.LastName,
-                BirthDate = user.BirthDate
+                BirthDate = user.BirthDate,
+                Region= user.Region
             };
     }
 }

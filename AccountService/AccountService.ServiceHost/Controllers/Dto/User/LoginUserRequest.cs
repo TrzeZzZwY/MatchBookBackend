@@ -1,4 +1,4 @@
-﻿namespace AccountService.ServiceHost.Controllers.Dto.LoginUser;
+﻿namespace AccountService.ServiceHost.Controllers.Dto.RegisterUser;
 
 public class LoginUserRequest
 {

@@ -1,8 +1,8 @@
 ﻿using AccountService.Domain.Common;
 
-namespace AccountService.Application.Handlers.GetUser;
+namespace AccountService.Application.Handlers.GetAdmin;
 
-public record GetUserResult
+public record GetAdminResult
 {
     public required int Id { get; set; }
 
@@ -12,7 +12,5 @@ public record GetUserResult
 
     public required string LastName { get; set; }
 
-    public required DateTime BirthDate { get; set; }
-
-    public required Region Region { get; set; }
+    public required int? AccountCreatorId { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using AccountService.Domain.Models;
 using AccountService.Repository;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace AccountService.ServiceHost.Extensions;
 
@@ -20,5 +21,12 @@ public static class IdentityExtensions
         services.AddIdentityCore<Account>(_options)
         .AddRoles<AccountRole>()
         .AddEntityFrameworkStores<DatabaseContext>();
+    }
+
+    public static int? GetId(this ClaimsPrincipal claimsPrincipal)
+    {
+        var value = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (value is null) return null;
+        return int.Parse(value);
     }
 }

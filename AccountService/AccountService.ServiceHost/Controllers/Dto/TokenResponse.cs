@@ -1,6 +1,6 @@
-﻿namespace AccountService.ServiceHost.Controllers.Dto.LoginUser;
+﻿namespace AccountService.ServiceHost.Controllers.Dto;
 
-public class LoginUserResponse
+public class TokenResponse
 {
     public required string Token { get; init; }
 

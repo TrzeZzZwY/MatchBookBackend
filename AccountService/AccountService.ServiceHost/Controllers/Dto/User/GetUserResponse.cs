@@ -1,14 +1,14 @@
 ﻿using AccountService.Domain.Common;
 
-namespace AccountService.Application.Handlers.GetUser;
+namespace AccountService.ServiceHost.Controllers.Dto.RegisterUser;
 
-public record GetUserResult
+public class GetUserResponse
 {
     public required int Id { get; set; }
 
     public required string Email { get; set; }
 
-    public required string FirstName { get; set; }
+    public required string FirtName { get; set; }
 
     public required string LastName { get; set; }
 

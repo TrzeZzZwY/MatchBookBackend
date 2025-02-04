@@ -41,7 +41,7 @@ public class RefreshTokenHandler : IRequestHandler<RefreshTokenCommand, Result<R
             return new Error("Expired or incorrect refresh token", ErrorReason.Unauthorized);
 
         refreshToken.Token = _tokenService.GenerateRefreshToken();
-        refreshToken.ExpireDate = DateTime.UtcNow.AddMinutes(30);
+        refreshToken.ExpireDate = DateTime.UtcNow.AddMinutes(300);
         _databaseContext.RefreshTokens.Update(refreshToken);
         await _databaseContext.SaveChangesAsync(cancellationToken);
 

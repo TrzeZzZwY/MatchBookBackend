@@ -24,7 +24,7 @@ public class CreateTokenHandler : IRequestHandler<CreateTokenCommand, Result<Cre
     public async Task<Result<CreateTokenResult, Error>> Handle(CreateTokenCommand request, CancellationToken cancellationToken)
     {
         var account = await _databaseContext.Users
-            .Where(e => e.UserAccountId == request.AccountId || e.AdminAccountId == request.AccountId)
+            .Where(e => e.Id == request.AccountId)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (account is null) return new Error("User not found", ErrorReason.BadRequest);

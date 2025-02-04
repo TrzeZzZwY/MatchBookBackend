@@ -1,6 +1,6 @@
-﻿namespace AccountService.ServiceHost.Controllers.Dto.RegisterUser;
+﻿namespace AccountService.ServiceHost.Controllers.Dto.Admin;
 
-public class GetUserResponse
+public class GetAdminResponse
 {
     public required int Id { get; set; }
 
@@ -9,6 +9,4 @@ public class GetUserResponse
     public required string FirtName { get; set; }
 
     public required string LastName { get; set; }
-
-    public required DateTime BirthDate { get; set; }
 }

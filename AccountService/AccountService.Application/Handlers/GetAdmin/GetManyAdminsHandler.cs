@@ -4,31 +4,29 @@ using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace AccountService.Application.Handlers.GetUser;
+namespace AccountService.Application.Handlers.GetAdmin;
 
-public class GetManyUsersHandler : IRequestHandler<GetManyUsersCommand, Result<List<GetUserResult>, Error>>
+public class GetManyAdminsHandler : IRequestHandler<GetManyAdminsCommand, Result<List<GetAdminResult>, Error>>
 {
     private readonly DatabaseContext _databaseContext;
 
-    public GetManyUsersHandler(DatabaseContext databaseContext)
+    public GetManyAdminsHandler(DatabaseContext databaseContext)
     {
         _databaseContext = databaseContext;
     }
 
-    public async Task<Result<List<GetUserResult>, Error>> Handle(GetManyUsersCommand request, CancellationToken cancellationToken)
+    public async Task<Result<List<GetAdminResult>, Error>> Handle(GetManyAdminsCommand request, CancellationToken cancellationToken)
     {
         //Todo: apply filters in future
-        var users = await _databaseContext.UserAccounts
+        var users = await _databaseContext.AdminAccounts
             .Skip((request.paginationOptions.PageNumber - 1) * request.paginationOptions.PageSize)
             .Take(request.paginationOptions.PageSize)
-            .Select(e => new GetUserResult { 
+            .Select(e => new GetAdminResult { 
                 Id = e.Id,
                 Email = e.Account.Email!,
                 FirstName = e.FistName,
                 LastName = e.LastName,
-                BirthDate = e.BirthDate,
-                Region = e.Region
-            })
+                AccountCreatorId = e.AccountCreatorId})
             .ToListAsync(cancellationToken);
 
         return users;
