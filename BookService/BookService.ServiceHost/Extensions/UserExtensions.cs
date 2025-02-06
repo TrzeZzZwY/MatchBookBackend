@@ -9,7 +9,7 @@ public static class UserExtensions
     {
         var value = claimsPrincipal.FindFirst("UserRegion")?.Value;
         if (value is null) return null;
-        return (Region)int.Parse(value);
+        return Enum.Parse<Region>(value);
     }
 
     public static int? GetId(this ClaimsPrincipal claimsPrincipal)

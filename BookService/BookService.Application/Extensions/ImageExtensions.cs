@@ -10,6 +10,7 @@ public static class ImageExtensions
         {
             "image/jpeg" => ImageType.JPEG,
             "image/png" => ImageType.PNG,
+            "image/heic" => ImageType.PNG,
             _ => ImageType.UNKNOWN
         };
     }

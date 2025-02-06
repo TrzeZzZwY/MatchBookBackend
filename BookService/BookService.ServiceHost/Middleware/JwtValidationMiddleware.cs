@@ -44,7 +44,7 @@ public class JwtValidationMiddleware
 
     public async Task<bool> IsTokenValid(string token)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:8900/api/Auth/OnlyValidToken")
+        var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:8900/api/Auth/OnlyValidToken")
         {
             Headers = { Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token) }
         };

@@ -59,7 +59,6 @@ public class UserBookItemController : ControllerBase
     }
 
     [HttpGet("image/{imageId:int}")]
-    [Authorize]
     public async Task<ActionResult> GetImage([FromRoute] int imageId, CancellationToken cancellation)
     {
         var command = new GetImageCommand
@@ -142,7 +141,7 @@ public class UserBookItemController : ControllerBase
     }
 
     [HttpGet("user-books/{userId:int}")]
-    [Authorize("User")]
+    [Authorize(Roles = "User")]
     public async Task<ActionResult<PaginationWrapper<UserBookItemResponse>>> GetUserBook(CancellationToken cancellation,
                 [FromRoute] int userId,
                 [FromQuery] int pageSize = 50,
