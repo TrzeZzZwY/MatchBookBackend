@@ -20,7 +20,7 @@ public class DeleteUserBookItemHandler : IRequestHandler<DeleteUserBookItemComma
             var item = await _databaseContext.UserBookItems.FindAsync([request.UserBookItemId], cancellationToken);
             if (item is null) return new DeleteUserBookItemResult();
 
-            if (item.UserId != request.UserId || !request.IsAdmin)
+            if (item.UserId != request.UserId && !request.IsAdmin)
                 return new Error("Unauthorized", ErrorReason.Undefined);
 
             var updateResult = item.UpdateStatus(UserBookItemStatus.Removed);
