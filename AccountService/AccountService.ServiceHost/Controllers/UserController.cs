@@ -40,10 +40,7 @@ public class UserController : ControllerBase
 
         if (result.IsSuccess) return StatusCode(StatusCodes.Status201Created);
 
-        return result.Error.Reason switch
-        {
-            _ => StatusCode(StatusCodes.Status500InternalServerError)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpPost]
@@ -101,10 +98,7 @@ public class UserController : ControllerBase
             });
         }
 
-        return result.Error.Reason switch
-        {
-            _ => StatusCode(StatusCodes.Status500InternalServerError)
-        };
+        return result.Error.ToErrorResult();
     }
 
     [HttpGet("{userId:int}")]
@@ -120,10 +114,6 @@ public class UserController : ControllerBase
         if (result.IsSuccess)
             return Ok(result.Value.ToDto());
 
-
-        return result.Error.Reason switch
-        {
-            _ => StatusCode(StatusCodes.Status500InternalServerError)
-        };
+        return result.Error.ToErrorResult();
     }
 }

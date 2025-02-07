@@ -25,21 +25,16 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<R
 
         if (account is not null) return new Error("Cannot create user", ErrorReason.undefined);
 
-        account = new Account
-        {
-            Email = request.Email,
-            UserName = request.Email,
-            CreateDate = DateTime.UtcNow
-        };
+        account = new Account(request.Email);
 
         var createResult = await _userManager.CreateAsync(account, request.Password);
 
         if (!createResult.Succeeded) 
-            return new Error(string.Join(',', createResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
+            return new Error(string.Join("\n", createResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
 
         var addToRoleResult = await _userManager.AddToRoleAsync(account, "User");
         if (!addToRoleResult.Succeeded)
-            return new Error(string.Join(',', addToRoleResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
+            return new Error(string.Join("\n", addToRoleResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
 
         var user = new UserAccount
         {
@@ -47,7 +42,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<R
             LastName = request.LastName,
             BirthDate = request.BirthDate,
             Region = request.Region,
-            Account = account
+            AccountId = account.Id
         };
 
         var userEntity = await _context.UserAccounts.AddAsync(user, cancellationToken);

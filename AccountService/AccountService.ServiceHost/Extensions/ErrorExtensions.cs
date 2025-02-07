@@ -13,14 +13,17 @@ public static class ErrorExtensions
             Description = error.Description
         };
 
-        return error.Reason switch
-        {
-            ErrorReason.BadRequest => Result(genericError, StatusCodes.Status400BadRequest),
-            ErrorReason.Unauthorized => Result(genericError, StatusCodes.Status401Unauthorized),
-            _ => Result(genericError, StatusCodes.Status500InternalServerError),
-        };
+        return new ObjectResult(genericError) { StatusCode = ResolveStatusCode(error.Reason) };
     }
 
-    private static ObjectResult Result(GenericError error, int statusCode)
-    => new ObjectResult(error) { StatusCode = statusCode };
+    private static int ResolveStatusCode(ErrorReason reason)
+    {
+        return reason switch
+        {
+            ErrorReason.BadRequest => StatusCodes.Status400BadRequest,
+            ErrorReason.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorReason.NotFound => StatusCodes.Status404NotFound,
+            _ => StatusCodes.Status500InternalServerError,
+        };
+    }
 }

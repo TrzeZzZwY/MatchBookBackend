@@ -6,6 +6,14 @@ namespace AccountService.Domain.Models;
 
 public class Account : IdentityUser<int>
 {
+    public Account(string email)
+    {
+        Email = email;
+        UserName = email;
+        CreateDate = DateTime.UtcNow;
+        Status = AccountStatus.ACTIVE;
+    }
+
     public int? UserAccountId { get; private set; }
 
     public UserAccount? UserAccount { get; private set; }
@@ -18,7 +26,9 @@ public class Account : IdentityUser<int>
 
     public RefreshToken RefreshToken { get; private set; }
 
-    public DateTime CreateDate { get; set; }
+    public DateTime CreateDate { get; private set; }
+
+    public AccountStatus Status { get; private set; }
 
     public Result<Account, Error> LinkAccountToUser(UserAccount userAccount)
     {
@@ -37,6 +47,14 @@ public class Account : IdentityUser<int>
 
         AdminAccount = adminAccount;
 
+        return this;
+    }
+
+    public Result<Account, Error> ChangeAccountStatus(AccountStatus newStatus)
+    {
+        if (Status == AccountStatus.REMOVED) return new Error("Cannot change status of removed account", ErrorReason.InvalidOperation);
+
+        Status = newStatus;
         return this;
     }
 }

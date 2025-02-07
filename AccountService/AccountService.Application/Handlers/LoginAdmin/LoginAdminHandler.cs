@@ -20,6 +20,9 @@ public class LoginAdminHandler : IRequestHandler<LoginAdminCommand, Result<Login
         if (account is null || !await _userManager.CheckPasswordAsync(account, request.Password) || account.AdminAccountId is null)
             return new Error("Invalid email or password", ErrorReason.BadRequest);
 
+        if (account.Status == AccountStatus.REMOVED || account.Status == AccountStatus.BANED)
+            return new Error("Cannot login to this account", ErrorReason.BadRequest);
+
         return new LoginAdminResult
         {
             AccountId = account.Id,

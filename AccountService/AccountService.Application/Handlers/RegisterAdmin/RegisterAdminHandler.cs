@@ -28,21 +28,16 @@ public class RegisterAdminHandler : IRequestHandler<RegisterAdminCommand, Result
             creatorAccount is null ||
             creatorAccount.AdminAccountId is null) return new Error("Cannot create admin", ErrorReason.undefined);
 
-        account = new Account
-        {
-            Email = request.Email,
-            UserName = request.Email,
-            CreateDate = DateTime.UtcNow
-        };
+        account = new Account(request.Email);
 
         var createResult = await _userManager.CreateAsync(account, request.Password);
 
         if (!createResult.Succeeded) 
-            return new Error(string.Join(',', createResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
+            return new Error(string.Join("\n", createResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
 
         var addToRoleResult = await _userManager.AddToRoleAsync(account, "Admin");
         if (!addToRoleResult.Succeeded)
-            return new Error(string.Join(',', addToRoleResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
+            return new Error(string.Join("\n", addToRoleResult.Errors.Select(e => e.Description)), ErrorReason.InternalError);
 
         var admin = new AdminAccount
         {

@@ -114,12 +114,7 @@ using (var scope = app.Services.CreateScope())
     if ((await accountManager.FindByEmailAsync(email)) is null)
     {
         var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-        var account = new Account
-        {
-            Email = email,
-            UserName = email,
-            CreateDate = DateTime.UtcNow
-        };
+        var account = new Account(email);
         var createResult = await accountManager.CreateAsync(account, password);
         var addToRoleResult = await accountManager.AddToRoleAsync(account, "Admin");
 
