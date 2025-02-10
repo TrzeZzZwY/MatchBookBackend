@@ -26,7 +26,7 @@ public class LoginAdminHandler : IRequestHandler<LoginAdminCommand, Result<Login
         return new LoginAdminResult
         {
             AccountId = account.Id,
-            UserId = (int)account.AdminAccountId
+            AdminId = (int)account.AdminAccountId
         };
     }
 }

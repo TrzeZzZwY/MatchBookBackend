@@ -12,6 +12,7 @@ public class CaseEntity
         ItemId = itemId;
         ReportNote = reportNote;
         ReportType = reportType;
+        CaseStatus = CaseStatus.OPEN;
     }
 
     public int Id { get; private set; }

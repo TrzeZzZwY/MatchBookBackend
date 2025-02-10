@@ -7,8 +7,6 @@ public class GetFeedCommand : IRequest<Result<PaginatedResult<GetUserBookResult>
 {
     public required PaginationOptions PaginationOptions { get; init; }
 
-    public Region Region { get; init; }
-
-    public int RequestUserId { get; init; }
+    public int UserId { get; init; }
 
 }

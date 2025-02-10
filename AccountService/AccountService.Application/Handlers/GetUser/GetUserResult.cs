@@ -15,4 +15,6 @@ public record GetUserResult
     public required DateTime BirthDate { get; set; }
 
     public required Region Region { get; set; }
+
+    public required AccountStatus Status { get; set; }
 }

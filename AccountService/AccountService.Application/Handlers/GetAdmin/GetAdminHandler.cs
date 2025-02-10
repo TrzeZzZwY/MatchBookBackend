@@ -29,7 +29,7 @@ public class GetAdminHandler : IRequestHandler<GetAdminCommand, Result<GetAdminR
             {
                 Id = admin.Id,
                 Email = admin.Account.Email!,
-                FirstName = admin.FistName,
+                FirstName = admin.FirstName,
                 LastName = admin.LastName,
                 AccountCreatorId = admin.AccountCreatorId
             };

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccountService.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250207182547_AccountStatus")]
-    partial class AccountStatus
+    [Migration("20250210214522_AddAccounts")]
+    partial class AddAccounts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -161,7 +161,7 @@ namespace AccountService.Repository.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FistName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -218,7 +218,7 @@ namespace AccountService.Repository.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FistName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

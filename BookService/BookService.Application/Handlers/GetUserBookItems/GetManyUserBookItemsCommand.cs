@@ -16,4 +16,8 @@ public class GetManyUserBookItemsCommand : IRequest<Result<PaginatedResult<GetUs
     public int? UserId { get; init; } = null;
 
     public string? Title { get; init; } = null;
+
+    public DateTime? StartDate { get; init; } = null;
+
+    public DateTime? EndDate { get; init; } = null;
 }

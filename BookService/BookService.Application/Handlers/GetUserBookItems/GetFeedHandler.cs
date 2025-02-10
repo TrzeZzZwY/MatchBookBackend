@@ -1,4 +1,5 @@
-﻿using BookService.Application.Extensions;
+﻿using BookService.Application.Clients;
+using BookService.Application.Extensions;
 using BookService.Domain.Common;
 using BookService.Repository;
 using CSharpFunctionalExtensions;
@@ -9,21 +10,32 @@ namespace BookService.Application.Handlers.GetUserBookItems;
 public class GetFeedHandler : IRequestHandler<GetFeedCommand, Result<PaginatedResult<GetUserBookResult>, Error>>
 {
     private readonly DatabaseContext _databaseContext;
+    private readonly AccountServiceClient _accountServiceClient;
 
-    public GetFeedHandler(DatabaseContext databaseContext)
+    public GetFeedHandler(DatabaseContext databaseContext, AccountServiceClient accountServiceClient)
     {
         _databaseContext = databaseContext;
+        _accountServiceClient = accountServiceClient;
     }
 
     public async Task<Result<PaginatedResult<GetUserBookResult>, Error>> Handle(GetFeedCommand request, CancellationToken cancellationToken)
     {
+        var user = await _accountServiceClient.FetchUser(request.UserId);
+        if (user.IsFailure) return user.Error;
+
+        var userlikes = _databaseContext.UserLikesBooks.Where(e => e.UserId == request.UserId).Select(e => e.UserBookItemId);
+
         var userBooks = _databaseContext.UserBookItems.AsQueryable();
 
-        userBooks = userBooks.Where(e => e.UserId != request.RequestUserId);
+        // Not user books
+        userBooks = userBooks.Where(e => e.UserId != request.UserId);
 
-        userBooks = userBooks.Where(e => e.Region == request.Region);
+        // In user region
+        userBooks = userBooks.Where(e => e.Region == user.Value.Region);
 
         userBooks = userBooks.Where(e => e.Status == UserBookItemStatus.ActivePublic);
+
+        userBooks = userBooks.Where(e => !userlikes.Contains(e.Id));
 
         userBooks = userBooks.OrderBy(e => e.CreateDate);
         var total = userBooks.Count();

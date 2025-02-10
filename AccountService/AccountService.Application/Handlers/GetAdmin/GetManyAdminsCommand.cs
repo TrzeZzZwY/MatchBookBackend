@@ -4,7 +4,7 @@ using MediatR;
 
 namespace AccountService.Application.Handlers.GetAdmin;
 
-public class GetManyAdminsCommand : IRequest<Result<List<GetAdminResult>, Error>>
+public class GetManyAdminsCommand : IRequest<Result<PaginatedResult<GetAdminResult>, Error>>
 {
-    public required PaginationOptions paginationOptions { get; init; }
+    public required PaginationOptions PaginationOptions { get; init; }
 }

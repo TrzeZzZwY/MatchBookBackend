@@ -1,4 +1,5 @@
-﻿using BookService.Domain.Common;
+﻿using BookService.Application.Clients;
+using BookService.Domain.Common;
 using BookService.Domain.Models;
 using BookService.Repository;
 using CSharpFunctionalExtensions;
@@ -8,10 +9,11 @@ namespace BookService.Application.Handlers.CreateUserBookItem;
 public class CreateUserBookItemHandler : IRequestHandler<CreateUserBookItemCommand, Result<CreateUserBookItemResult, Error>>
 {
     private readonly DatabaseContext _databaseContext;
-
-    public CreateUserBookItemHandler(DatabaseContext databaseContext)
+    private readonly AccountServiceClient _accountServiceClient;
+    public CreateUserBookItemHandler(DatabaseContext databaseContext, AccountServiceClient accountServiceClient)
     {
         _databaseContext = databaseContext;
+        _accountServiceClient = accountServiceClient;
     }
 
     public async Task<Result<CreateUserBookItemResult, Error>> Handle(CreateUserBookItemCommand request, CancellationToken cancellationToken)
@@ -21,6 +23,9 @@ public class CreateUserBookItemHandler : IRequestHandler<CreateUserBookItemComma
 
         var imageReference = await _databaseContext.Images.FindAsync([request.ImageId], cancellationToken);
 
+        var user = await _accountServiceClient.FetchUser(request.UserId);
+        if (user.IsFailure) return user.Error;
+
         var userBookItem = new UserBookItem
         {
             UserId = request.UserId,
@@ -28,7 +33,7 @@ public class CreateUserBookItemHandler : IRequestHandler<CreateUserBookItemComma
             CreateDate = DateTime.UtcNow,
             BookReferenceId = request.BookReferenceId,
             ItemImage = imageReference,
-            Region = request.Region
+            Region = user.Value.Region
         };
 
         if (request.BookPointId != null)

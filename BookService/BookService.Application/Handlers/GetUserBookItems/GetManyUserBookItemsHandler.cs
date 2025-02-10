@@ -34,6 +34,12 @@ public class GetManyUserBookItemsHandler : IRequestHandler<GetManyUserBookItemsC
             userBooks = userBooks.Where(e => e.BookReference.Title.ToLower().Contains(request.Title.ToLower()));
         }
 
+        if (request.StartDate is not null)
+            userBooks = userBooks.Where(e => e.CreateDate >= request.StartDate);
+
+        if (request.EndDate is not null)
+            userBooks = userBooks.Where(e => e.CreateDate <= request.EndDate);
+
         userBooks = userBooks.OrderBy(e => e.CreateDate);
         var total = userBooks.Count();
         userBooks = userBooks

@@ -1,9 +1,11 @@
-﻿using AccountService.Domain.Common;
+﻿using BookService.Domain.Common;
 
-namespace AccountService.Domain.Models;
-public class UserAccount
+namespace BookService.Application.Clients.Dto;
+public class GetUserResponse
 {
     public int Id { get; set; }
+
+    public string Email { get; set; }
 
     public string FirstName { get; set; }
 
@@ -12,8 +14,4 @@ public class UserAccount
     public DateTime BirthDate { get; set; }
 
     public Region Region { get; set; }
-
-    public int AccountId { get; set; }
-
-    public Account Account { get; set; }
 }

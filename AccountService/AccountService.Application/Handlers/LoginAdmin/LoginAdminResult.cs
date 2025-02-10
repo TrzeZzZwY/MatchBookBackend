@@ -2,5 +2,5 @@
 public class LoginAdminResult
 {
     public required int AccountId { get; set; }
-    public required int UserId { get; set; }
+    public required int AdminId { get; set; }
 }

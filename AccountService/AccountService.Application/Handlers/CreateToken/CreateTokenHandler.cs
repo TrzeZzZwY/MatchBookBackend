@@ -64,13 +64,8 @@ public class CreateTokenHandler : IRequestHandler<CreateTokenCommand, Result<Cre
     {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, request.AccountId.ToString()),
+            new(ClaimTypes.NameIdentifier, request.UserId.ToString()),
         };
-
-        if (roles.Contains("User"))
-        {
-            claims.Add(new("UserRegion", account.UserAccount!.Region.ToString()));
-        }
 
         foreach (var role in roles)
             claims.Add(new(ClaimTypes.Role, role));

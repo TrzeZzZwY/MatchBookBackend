@@ -66,7 +66,8 @@ public class AdminController : ControllerBase
         {
             var getTokenCommand = new CreateTokenCommand
             {
-                AccountId = loginResult.Value.AccountId
+                AccountId = loginResult.Value.AccountId,
+                UserId = loginResult.Value.AdminId
             };
 
             var getTokenResult = await _mediator.Send(getTokenCommand, cancellation);
@@ -86,7 +87,7 @@ public class AdminController : ControllerBase
     {
         var command = new GetManyAdminsCommand
         {
-            paginationOptions = new PaginationOptions
+            PaginationOptions = new PaginationOptions
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize
@@ -97,14 +98,9 @@ public class AdminController : ControllerBase
 
         if (result.IsSuccess)
         {
-            var users = result.Value.Select(e => e.ToDto());
-            return Ok(new PaginationWrapper<GetAdminResponse>()
-            {
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                Items = users,
-                ItemsCount = users.Count()
-            });
+            var users = result.Value.GetPaginationResult(DtoExtensions.ToDto);
+
+            return StatusCode(StatusCodes.Status200OK, users);
         }
 
         return result.Error.Reason switch

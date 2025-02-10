@@ -19,6 +19,7 @@ using BookService.ServiceHost.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BookService.Application.Handlers.GetMatches;
 
 namespace BookService.ServiceHost.Controllers;
 
@@ -81,9 +82,8 @@ public class UserBookItemController : ControllerBase
     [Authorize(Roles = "User")]
     public async Task<ActionResult<CreateEntityResponse>> AddUserItemBook([FromBody] UserBookItemRequest request, CancellationToken cancellation)
     {
-        var region = User.GetRegion();
         var userId = User.GetId();
-        if (region is null || userId is null) return StatusCode(StatusCodes.Status400BadRequest);
+        if (userId is null) return StatusCode(StatusCodes.Status400BadRequest);
 
         var command = new CreateUserBookItemCommand
         {
@@ -92,8 +92,7 @@ public class UserBookItemController : ControllerBase
             BookPointId = request.BookPointId,
             Description = request.Description,
             Status = request.Status,
-            ImageId = request.ImageId,
-            Region = (Region)region
+            ImageId = request.ImageId
         };
 
         var result = await _mediator.Send(command, cancellation);
@@ -104,7 +103,7 @@ public class UserBookItemController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize("Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<PaginationWrapper<UserBookItemResponse>>> GetManyUserBookItem(CancellationToken cancellation,
                 [FromQuery] int pageSize = 50,
                 [FromQuery] int pageNumber = 1,
@@ -112,7 +111,9 @@ public class UserBookItemController : ControllerBase
                 [FromQuery] UserBookItemStatus? itemStatus = null,
                 [FromQuery] Region? region = null,
                 [FromQuery] int? userId = null,
-                [FromQuery] string? title = null)
+                [FromQuery] string? title = null,
+                [FromQuery] DateTime? startDate = null,
+                [FromQuery] DateTime? endDate = null)
     {;
         var command = new GetManyUserBookItemsCommand
         {
@@ -125,7 +126,9 @@ public class UserBookItemController : ControllerBase
             ItemStatus = itemStatus,
             Region = region,
             UserId = userId,
-            Title = title
+            Title = title,
+            StartDate = startDate,
+            EndDate = endDate
         };
 
         var result = await _mediator.Send(command, cancellation);
@@ -141,7 +144,7 @@ public class UserBookItemController : ControllerBase
     }
 
     [HttpGet("user-books/{userId:int}")]
-    [Authorize(Roles = "User")]
+    [Authorize]
     public async Task<ActionResult<PaginationWrapper<UserBookItemResponse>>> GetUserBook(CancellationToken cancellation,
                 [FromRoute] int userId,
                 [FromQuery] int pageSize = 50,
@@ -175,13 +178,12 @@ public class UserBookItemController : ControllerBase
     }
 
     [HttpGet("feed")]
-    [Authorize("User")]
+    [Authorize(Roles = "User")]
     public async Task<ActionResult<PaginationWrapper<UserBookItemResponse>>> GetFeed(CancellationToken cancellation,
             [FromQuery] int pageSize = 50,
             [FromQuery] int pageNumber = 1)
     {
-        var requestUserId = User.GetId();
-        var region = User.GetRegion();
+        var userId = User.GetId();
         var command = new GetFeedCommand
         {
             PaginationOptions = new PaginationOptions
@@ -189,8 +191,7 @@ public class UserBookItemController : ControllerBase
                 PageNumber = pageNumber,
                 PageSize = pageSize
             },
-            Region = (Region)region,
-            RequestUserId = (int)requestUserId
+            UserId = (int)userId
         };
 
         var result = await _mediator.Send(command, cancellation);
@@ -254,9 +255,8 @@ public class UserBookItemController : ControllerBase
     [Authorize(Roles = "User")]
     public async Task<ActionResult> Edit([FromRoute] int userBookItemId, [FromBody] UserBookItemRequest request, CancellationToken cancellation)
     {
-        var region = User.GetRegion();
         var userId = User.GetId();
-        if (region is null || userId is null) return StatusCode(StatusCodes.Status400BadRequest);
+        if (userId is null) return StatusCode(StatusCodes.Status400BadRequest);
         var command = new EditUserBookItemCommand
         {
             UserBookItemId = userBookItemId,
@@ -265,8 +265,7 @@ public class UserBookItemController : ControllerBase
             BookReferenceId = request.BookReferenceId,
             UserId = (int)userId,
             BookPointId = request.BookPointId,
-            ImageId = request.ImageId,
-            Region = (Region)region
+            ImageId = request.ImageId
         };
         var result = await _mediator.Send(command, cancellation);
 
@@ -282,13 +281,11 @@ public class UserBookItemController : ControllerBase
     [Authorize(Roles = "User")]
     public async Task<ActionResult> BatchChangeRegion(CancellationToken cancellation)
     {
-        var region = User.GetRegion();
         var userId = User.GetId();
-        if (region is null || userId is null) return StatusCode(StatusCodes.Status400BadRequest);
+        if (userId is null) return StatusCode(StatusCodes.Status400BadRequest);
         var command = new EditAllUserBookItemsRegionCommand
         {
-            UserId = (int)userId,
-            Region = (Region)region
+            UserId = (int)userId
         };
         var result = await _mediator.Send(command, cancellation);
 
@@ -322,7 +319,7 @@ public class UserBookItemController : ControllerBase
 
     [HttpPost("toggle-like")]
     [Authorize(Roles = "User")]
-    public async Task<ActionResult> ToggleLikeUserItem([FromBody] UserLikeBookRequest request, CancellationToken cancellation)
+    public async Task<ActionResult<UserLikeBookResponse>> ToggleLikeUserItem([FromBody] UserLikeBookRequest request, CancellationToken cancellation)
     {
         var userId = User.GetId();
         if (userId is null) return StatusCode(StatusCodes.Status400BadRequest);
@@ -331,8 +328,24 @@ public class UserBookItemController : ControllerBase
         var result = await _mediator.Send(command, cancellation);
 
         if (result.IsSuccess)
-            return StatusCode(StatusCodes.Status200OK);
+        {
+            var getMatchesCommand = new GetMatchesCommand
+            {
+                PaginationOptions = new PaginationOptions
+                {
+                    PageNumber = 1,
+                    PageSize = 9999 
+                },
+                UserId = (int)userId
+            };
 
+            var getmatchesResult = await _mediator.Send(getMatchesCommand, cancellation);
+            if (getmatchesResult.IsFailure)
+                return getmatchesResult.Error.ToErrorResult();
+
+            bool matched = getmatchesResult.Value.Matches.SelectMany(e => e.Items).Any(e => e.RequestedBook.UserBookItemId == request.UserBookItemId);
+            return Ok(new UserLikeBookResponse { HaveNewMatches = matched});
+        }
         return result.Error.ToErrorResult();
     }
 
@@ -340,9 +353,9 @@ public class UserBookItemController : ControllerBase
     [Authorize]
     public async Task<ActionResult<UserLikesResponse>> GetUserLikes(CancellationToken cancellation,
                 [FromQuery] int pageSize = 50,
-                [FromQuery] int pageNumber = 1,
-                [FromQuery] int userId = 1)
+                [FromQuery] int pageNumber = 1)
     {
+        var userId = User.GetId();
         var command = new GetUserLikesCommand
         {
             PaginationOptions = new PaginationOptions
@@ -350,7 +363,7 @@ public class UserBookItemController : ControllerBase
                 PageNumber = pageNumber,
                 PageSize = pageSize
             },
-            UserId = userId
+            UserId = (int)userId
         };
 
         var result = await _mediator.Send(command, cancellation);
@@ -368,27 +381,4 @@ public class UserBookItemController : ControllerBase
 
         return result.Error.ToErrorResult();
     }
-
-    [HttpGet("test-token-any")]
-    [Authorize]
-    public async Task<ActionResult> TestAny()
-    {
-        var a = User.GetRegion();
-        return Ok();
-    }
-
-    [HttpGet("test-token-user")]
-    [Authorize(Roles = "User")]
-    public async Task<ActionResult> TestUser()
-    {
-        return Ok();
-    }
-
-    [HttpGet("test-token-admin")]
-    [Authorize(Roles = "Admin")]
-    public async Task<ActionResult> TestAdmin()
-    {
-        return Ok();
-    }
-
 }

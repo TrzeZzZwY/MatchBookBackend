@@ -11,7 +11,7 @@ public class AdminAccountConfiguration : IEntityTypeConfiguration<AdminAccount>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.FistName);
+        builder.Property(e => e.FirstName);
         builder.Property(e => e.LastName);
         builder.HasOne(e => e.AccountCreator).WithOne();
         builder.HasOne(e => e.Account).WithOne(e => e.AdminAccount)

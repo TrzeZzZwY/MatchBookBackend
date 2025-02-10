@@ -17,9 +17,11 @@ public class GetUserLikesHandler : IRequestHandler<GetUserLikesCommand, Result<G
 
     public async Task<Result<GetUserLikesResult, Error>> Handle(GetUserLikesCommand request, CancellationToken cancellationToken)
     {
-        var itemsId = _databaseContext.UserLikesBooks.Where(e => e.UserId == request.UserId).Select(e => e.UserBookItemId);
+        var itemsId = _databaseContext.UserLikesBooks
+            .Where(e => e.UserId == request.UserId)
+            .Select(e => e.UserBookItemId);
 
-        var items = _databaseContext.UserBookItems.Where(e => itemsId.Contains(e.Id));
+        var items = _databaseContext.UserBookItems.Where(e => itemsId.Contains(e.Id)).Where(e => e.Status == UserBookItemStatus.ActivePublic);
 
         var total = items.Count();
         items = items

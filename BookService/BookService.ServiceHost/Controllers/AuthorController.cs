@@ -24,7 +24,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "User")]
+    [Authorize]
     public async Task<ActionResult<CreateEntityResponse>> AddAuthor([FromBody] AuthorRequest request, CancellationToken cancellation)
     {
         var command = new CreateAuthorCommand
@@ -118,7 +118,7 @@ public class AuthorController: ControllerBase
     }
 
     [HttpPut("{authorId:int}")]
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> EditAuthor([FromRoute] int authorId, [FromBody] AuthorRequest request, CancellationToken cancellation)
     {
         //Only for admin

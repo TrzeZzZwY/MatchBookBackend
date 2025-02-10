@@ -78,6 +78,13 @@ builder.Services.AddHttpClient<ReportingServiceClient>()
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     });
 
+builder.Services.AddHttpClient<AccountServiceClient>()
+    .ConfigureHttpClient(client =>
+    {
+        client.BaseAddress = httpConfiguration.AccountSeriveUrl;
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    });
+
 var app = builder.Build();
 app.UseCors(MyAllowSpecificOrigins);
 

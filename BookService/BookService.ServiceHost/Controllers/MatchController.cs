@@ -1,6 +1,5 @@
 ﻿using BookService.Application.Handlers.GetMatches;
 using BookService.Domain.Common;
-using BookService.ServiceHost.Controllers.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BookService.ServiceHost.Controllers.Dto.Match;
@@ -22,7 +21,7 @@ public class MatchController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "User")]
-    public async Task<ActionResult> GetMatchesForUser(CancellationToken cancellation,
+    public async Task<ActionResult<MatchesResponse>> GetMatchesForUser(CancellationToken cancellation,
                 [FromQuery] int pageSize = 50,
                 [FromQuery] int pageNumber = 1)
     {
@@ -44,7 +43,27 @@ public class MatchController : ControllerBase
         {
             var userLikes = new MatchesResponse
             {
-                MatchedUsers = result.Value.MatchedUsersIds
+                Matches = result.Value.Matches.Select(e => new MatchResponse
+                {
+                    UserId = e.UserId,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    MatchBookPair = e.Items.Select(r => new MatchBookPairResponse
+                    {
+                        OfferedBook = new BookItemResponse
+                        {
+                            Title = r.OfferedBook.Title,
+                            ImageId = r.OfferedBook.ImageId,
+                            UserBookItemId = r.OfferedBook.UserBookItemId
+                        },
+                        RequestedBook = new BookItemResponse
+                        {
+                            Title = r.RequestedBook.Title,
+                            ImageId = r.RequestedBook.ImageId,
+                            UserBookItemId = r.OfferedBook.UserBookItemId
+                        },
+                    }).ToList()
+                }).ToList()
             };
 
             return StatusCode(StatusCodes.Status200OK, userLikes);

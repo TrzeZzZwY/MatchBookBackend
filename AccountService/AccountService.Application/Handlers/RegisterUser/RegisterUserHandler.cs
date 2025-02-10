@@ -38,7 +38,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Result<R
 
         var user = new UserAccount
         {
-            FistName = request.FirstName,
+            FirstName = request.FirstName,
             LastName = request.LastName,
             BirthDate = request.BirthDate,
             Region = request.Region,

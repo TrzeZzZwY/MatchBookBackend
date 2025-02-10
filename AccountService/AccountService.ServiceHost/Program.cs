@@ -120,7 +120,7 @@ using (var scope = app.Services.CreateScope())
 
         var admin = new AdminAccount
         {
-            FistName = firstName,
+            FirstName = firstName,
             LastName = lastName,
             Account = account
         };

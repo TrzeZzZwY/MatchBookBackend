@@ -11,7 +11,7 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.FistName);
+        builder.Property(e => e.FirstName);
         builder.Property(e => e.LastName);
         builder.Property(e => e.Region);
         builder.Property(e => e.BirthDate);

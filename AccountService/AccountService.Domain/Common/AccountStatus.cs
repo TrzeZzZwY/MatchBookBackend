@@ -1,4 +1,7 @@
-﻿namespace AccountService.Domain.Common;
+﻿using System.Text.Json.Serialization;
+
+namespace AccountService.Domain.Common;
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum AccountStatus
 {
     REMOVED = 0,

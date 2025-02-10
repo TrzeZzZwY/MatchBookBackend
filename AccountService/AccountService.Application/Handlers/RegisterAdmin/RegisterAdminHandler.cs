@@ -41,7 +41,7 @@ public class RegisterAdminHandler : IRequestHandler<RegisterAdminCommand, Result
 
         var admin = new AdminAccount
         {
-            FistName = request.FirstName,
+            FirstName = request.FirstName,
             LastName = request.LastName,
             Account = account,
             AccountCreatorId = creatorAccount.AdminAccountId

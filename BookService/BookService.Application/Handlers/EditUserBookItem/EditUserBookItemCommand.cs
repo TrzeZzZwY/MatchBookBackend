@@ -18,6 +18,4 @@ public class EditUserBookItemCommand : IRequest<Result<EditUserBookItemResult, E
     public int? BookPointId { get; init; }
 
     public int? ImageId { get; init; }
-
-    public required Region Region { get; init; }
 }

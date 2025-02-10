@@ -5,13 +5,6 @@ namespace BookService.ServiceHost.Extensions;
 
 public static class UserExtensions
 {
-    public static Region? GetRegion(this ClaimsPrincipal claimsPrincipal)
-    {
-        var value = claimsPrincipal.FindFirst("UserRegion")?.Value;
-        if (value is null) return null;
-        return Enum.Parse<Region>(value);
-    }
-
     public static int? GetId(this ClaimsPrincipal claimsPrincipal)
     {
         var value = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;

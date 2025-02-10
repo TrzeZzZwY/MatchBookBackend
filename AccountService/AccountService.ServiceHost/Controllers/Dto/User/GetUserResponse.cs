@@ -8,11 +8,13 @@ public class GetUserResponse
 
     public required string Email { get; set; }
 
-    public required string FirtName { get; set; }
+    public required string FirstName { get; set; }
 
     public required string LastName { get; set; }
 
     public required DateTime BirthDate { get; set; }
 
     public required Region Region { get; set; }
+
+    public required AccountStatus Status { get; set; }
 }

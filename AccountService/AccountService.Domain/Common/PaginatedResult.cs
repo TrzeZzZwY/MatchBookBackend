@@ -6,7 +6,7 @@ public class PaginatedResult<TItem>
 
     public required int PageSize { get; init; }
 
-    public required int ItemCount { get; init; }
+    public required int TotalItemsCount { get; init; }
 
-    public required List<TItem> items { get; init; }
+    public required List<TItem> Items { get; init; }
 }
