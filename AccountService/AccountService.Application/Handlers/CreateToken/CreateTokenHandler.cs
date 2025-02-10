@@ -50,7 +50,7 @@ public class CreateTokenHandler : IRequestHandler<CreateTokenCommand, Result<Cre
                 };
             }
 
-            refreshToken.ExpireDate = DateTime.UtcNow.AddMinutes(10);
+            refreshToken.ExpireDate = DateTime.UtcNow.AddMinutes(300);
             refreshToken.Token = _tokenService.GenerateRefreshToken();
 
             _databaseContext.RefreshTokens.Update(refreshToken);

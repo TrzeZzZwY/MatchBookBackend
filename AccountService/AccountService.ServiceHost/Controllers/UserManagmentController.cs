@@ -1,5 +1,4 @@
 ﻿using AccountService.Application.Handlers.UserStatus;
-using AccountService.ServiceHost.Controllers.Dto.Admin;
 using AccountService.ServiceHost.Controllers.Dto.UserManagment;
 using AccountService.ServiceHost.Extensions;
 using MediatR;

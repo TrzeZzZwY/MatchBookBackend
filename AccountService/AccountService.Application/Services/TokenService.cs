@@ -24,7 +24,7 @@ public class TokenService : ITokenService
             var signinCredentials = new SigningCredentials(_jwtOptions.TokenValidationParameters.IssuerSigningKey, SecurityAlgorithms.HmacSha256);
             var tokeOptions = new JwtSecurityToken(
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
+                    expires: DateTime.Now.AddMinutes(60),
                     notBefore: DateTime.UtcNow,
                     signingCredentials: signinCredentials,
                     issuer : "https://localhost:8900"

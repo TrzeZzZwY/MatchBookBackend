@@ -1,12 +1,15 @@
-using BookService.Application.Clients;
-using BookService.Application.Handlers.CreateAuthor;
 using BookService.Repository;
-using BookService.ServiceHost.Middleware;
-using BookService.ServiceHost.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ReportingService.ServiceHost.Middleware;
+using ReportingService.Application.Handlers.CreateCase;
+using ReportingService.ServiceHost.Utils;
+using ReportingService.Application.Clients;
 using System.Net.Http.Headers;
+using ReportingService.Application.Strategies;
+using ReportingService.Domain.Models;
+using ReportingService.Application.Strategies.RejectCase;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -22,7 +25,7 @@ builder.Services.AddDbContext<DatabaseContext>(opt =>
 //Add CQRS
 builder.Services.AddMediatR(config =>
 {
-    config.RegisterServicesFromAssembly(typeof(CreateAuthorHandler).Assembly);
+    config.RegisterServicesFromAssembly(typeof(CreateCaseCommand).Assembly);
 });
 
 builder.Services.AddControllers();
@@ -66,26 +69,39 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer();
 builder.Services.AddAuthorization();
-builder.Services.AddHttpClient();
-builder.Services.AddHttpContextAccessor();
+
+
 var httpConfiguration = configuration.GetSection("HttpClientConfiguration").Get<HttpClientConfiguration>()
     ?? throw new Exception("Cannot get HttpClient options");
 
-builder.Services.AddHttpClient<ReportingServiceClient>()
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<BookServiceClient>()
     .ConfigureHttpClient(client =>
     {
-        client.BaseAddress = httpConfiguration.ReportingServiceUrl;
+        client.BaseAddress = httpConfiguration.BookSeriveUrl;
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     });
+
+builder.Services.AddHttpClient<AccountServiceClient>()
+    .ConfigureHttpClient(client =>
+    {
+        client.BaseAddress = httpConfiguration.AccountSeriveUrl;
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    });
+
+builder.Services.AddScoped<IStrategy<CaseEntity>, RejectAuthorCaseItemStrategy>();
+builder.Services.AddScoped<IStrategy<CaseEntity>, RejectBookCaseItemStrategy>();
+builder.Services.AddScoped<IStrategy<CaseEntity>, RejectUserItemCaseItemStrategy>();
+builder.Services.AddScoped<IStrategy<CaseEntity>, RejectUserCaseItemStrategy>();
 
 var app = builder.Build();
 app.UseCors(MyAllowSpecificOrigins);
 
-app.UseAuthentication(); // Rejestracja autoryzacji
-app.UseMiddleware<JwtValidationMiddleware>(); // Nasz middleware JWT
-app.UseAuthorization(); // Rejestracja autoryzacji w pipeline
+app.UseAuthentication(); 
+app.UseMiddleware<JwtValidationMiddleware>();
+app.UseAuthorization();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

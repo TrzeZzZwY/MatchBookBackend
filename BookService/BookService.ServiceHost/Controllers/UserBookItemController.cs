@@ -227,7 +227,7 @@ public class UserBookItemController : ControllerBase
     }
 
     [HttpDelete("{userBookItemId:int}")]
-    [Authorize(Roles = "User")]
+    [Authorize]
     public async Task<ActionResult> Delete([FromRoute] int userBookItemId, CancellationToken cancellation)
     {
         //Only for admin or 

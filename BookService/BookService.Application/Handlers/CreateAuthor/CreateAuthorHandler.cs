@@ -1,4 +1,5 @@
-﻿using BookService.Domain.Common;
+﻿using BookService.Application.Clients;
+using BookService.Domain.Common;
 using BookService.Domain.Models;
 using BookService.Repository;
 using CSharpFunctionalExtensions;
@@ -9,10 +10,11 @@ namespace BookService.Application.Handlers.CreateAuthor;
 public class CreateAuthorHandler : IRequestHandler<CreateAuthorCommand, Result<CreateAuthorResult, Error>>
 {
     private readonly DatabaseContext _databaseContext;
-
-    public CreateAuthorHandler(DatabaseContext databaseContext)
+    private readonly ReportingServiceClient _reportingServiceClient;
+    public CreateAuthorHandler(DatabaseContext databaseContext, ReportingServiceClient reportingServiceClient)
     {
         _databaseContext = databaseContext;
+        _reportingServiceClient = reportingServiceClient;
     }
     public async Task<Result<CreateAuthorResult, Error>> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
     {
@@ -35,6 +37,9 @@ public class CreateAuthorHandler : IRequestHandler<CreateAuthorCommand, Result<C
 
         await _databaseContext.AddAsync(author, cancellationToken);
         await _databaseContext.SaveChangesAsync(cancellationToken);
+
+        var createCaseResult = await _reportingServiceClient.CreateAuthorCase(author);
+        if (createCaseResult.IsFailure) return createCaseResult.Error;
 
         return new CreateAuthorResult { AuthorId = author.Id };
     }
