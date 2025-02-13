@@ -2,6 +2,7 @@
 using BookService.Repository;
 using CSharpFunctionalExtensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookService.Application.Handlers.DeleteUserBookItem;
 public class DeleteUserBookItemHandler : IRequestHandler<DeleteUserBookItemCommand, Result<DeleteUserBookItemResult, Error>>
@@ -26,6 +27,11 @@ public class DeleteUserBookItemHandler : IRequestHandler<DeleteUserBookItemComma
             var updateResult = item.UpdateStatus(UserBookItemStatus.Removed);
             item.UpdateDate = DateTime.UtcNow;
             if (updateResult.IsFailure) return updateResult.Error;
+
+            await _databaseContext.BookExchanges
+                .Where(e => e.InitiatorBookItemId == request.UserBookItemId || e.ReceiverBookItemId == request.UserBookItemId)
+                .Where(e => e.Status == ExchangeStatus.Pending)
+                .ExecuteUpdateAsync(e => e.SetProperty(r => r.Status, ExchangeStatus.Cancelled));
 
             await _databaseContext.SaveChangesAsync(cancellationToken);
             return new DeleteUserBookItemResult();

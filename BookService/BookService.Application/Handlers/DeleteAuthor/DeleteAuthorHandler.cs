@@ -3,6 +3,7 @@ using BookService.Domain.Models;
 using BookService.Repository;
 using CSharpFunctionalExtensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookService.Application.Handlers.DeleteAuthor;
 public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Result<DeleteAuthorResult, Error>>
@@ -28,6 +29,14 @@ public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Result<D
             {
                 book.IsDeleted = true;
                 await _databaseContext.Entry(book).Collection(e => e.BookItems).LoadAsync();
+
+                var userBooksIds = book.BookItems.Select(e => e.Id);
+
+                await _databaseContext.BookExchanges
+                    .Where(e => userBooksIds.Contains(e.InitiatorBookItemId) || userBooksIds.Contains(e.ReceiverBookItemId))
+                    .Where(e => e.Status == ExchangeStatus.Pending)
+                    .ExecuteUpdateAsync(e => e.SetProperty(r => r.Status, ExchangeStatus.Cancelled));
+
                 foreach (UserBookItem item in book.BookItems)
                 {
                     var updateResult = item.UpdateStatus(UserBookItemStatus.Removed);

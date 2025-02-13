@@ -12,4 +12,8 @@ public class CreateCaseCommand : IRequest<Result<CreateCaseResult, Error>>
     public required Dictionary<string, string> CaseFields { get; set; }
 
     public required int ItemId { get; set; }
+
+    public required string Notes { get; set; }
+
+    public required ReportType ReportType { get; set; }
 }

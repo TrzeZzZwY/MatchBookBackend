@@ -24,8 +24,8 @@ public class CreateCaseHandler : IRequestHandler<CreateCaseCommand, Result<Creat
             caseItemType: request.Type,
             itemId: request.ItemId,
             serializedCaseFields: serializedValues,
-            reportNote: "Auto-created case",
-            reportType: ReportType.AutoReport
+            reportNote: request.Notes,
+            reportType: request.ReportType
             );
 
         await _databaseContext.AddAsync(entity, cancellationToken);

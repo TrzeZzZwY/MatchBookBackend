@@ -2,6 +2,7 @@
 using BookService.Repository;
 using CSharpFunctionalExtensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookService.Application.Handlers.EditUserBookItem;
 public class EditUserBookItemHandler : IRequestHandler<EditUserBookItemCommand, Result<EditUserBookItemResult, Error>>
@@ -24,6 +25,11 @@ public class EditUserBookItemHandler : IRequestHandler<EditUserBookItemCommand, 
             {
                 var updateStatusResult = item.UpdateStatus(request.Status);
                 if (updateStatusResult.IsFailure) return updateStatusResult.Error;
+
+                await _databaseContext.BookExchanges
+                    .Where(e => e.InitiatorBookItemId == request.UserBookItemId || e.ReceiverBookItemId == request.UserBookItemId)
+                    .Where(e => e.Status == ExchangeStatus.Pending)
+                    .ExecuteUpdateAsync(e => e.SetProperty(r => r.Status, ExchangeStatus.Cancelled));
             }
 
             var bookReference = await _databaseContext.Books.FindAsync([request.BookReferenceId], cancellationToken);

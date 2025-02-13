@@ -1,4 +1,6 @@
-﻿namespace BookService.Application.Handlers.GetMatches;
+﻿using BookService.Domain.Common;
+
+namespace BookService.Application.Handlers.GetMatches;
 public class GetMatchesResult
 {
     public required List<Match> Matches { get; set; }
@@ -19,6 +21,12 @@ public class MatchBook
 {
     public BookItem OfferedBook { get; set; }
     public BookItem RequestedBook { get; set; }
+
+    public int? ExchangeId { get; set; }
+
+    public ExchangeStatus? ExchangeStatus { get; set; }
+
+    public bool? IsMyOffer { get; set; }
 }
 
 public class BookItem

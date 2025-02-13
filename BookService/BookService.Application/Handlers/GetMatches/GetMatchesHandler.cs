@@ -94,6 +94,19 @@ public class GetMatchesHandler : IRequestHandler<GetMatchesCommand, Result<GetMa
             if (userResult.IsFailure)
                 return userResult.Error;
 
+            foreach (var item in match.Value)
+            {
+                var exchange = _databaseContext.BookExchanges.Where(e =>
+                (e.InitiatorBookItemId == item.OfferedBook.UserBookItemId && e.ReceiverBookItemId == item.RequestedBook.UserBookItemId && e.InitiatorUserId == request.UserId && e.ReceiverUserId == userResult.Value.Id) ||
+                (e.InitiatorBookItemId == item.RequestedBook.UserBookItemId && e.ReceiverBookItemId == item.OfferedBook.UserBookItemId && e.InitiatorUserId == userResult.Value.Id && e.ReceiverUserId == request.UserId)).FirstOrDefault();
+
+                if(exchange is not null)
+                {
+                    item.ExchangeId = exchange.Id;
+                    item.ExchangeStatus = exchange.Status;
+                    item.IsMyOffer = exchange.InitiatorUserId == request.UserId;
+                }
+            }
             matchResults.Add(new Match
             {
                 UserId = userResult.Value.Id,

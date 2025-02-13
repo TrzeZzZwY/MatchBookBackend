@@ -22,6 +22,8 @@ public class DatabaseContext : DbContext
 
     public DbSet<Image> Images => Set<Image>();
 
+    public DbSet<BookExchange> BookExchanges => Set<BookExchange>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

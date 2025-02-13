@@ -1,4 +1,6 @@
-﻿namespace BookService.ServiceHost.Controllers.Dto.Match;
+﻿using BookService.Domain.Common;
+
+namespace BookService.ServiceHost.Controllers.Dto.Match;
 
 public class MatchesResponse
 {
@@ -19,7 +21,14 @@ public class MatchBookPairResponse
 {
     public BookItemResponse OfferedBook { get; set; }
     public BookItemResponse RequestedBook { get; set; }
+
+    public int? ExchangeId { get; set; }
+
+    public ExchangeStatus? ExchangeStatus { get; set; }
+
+    public bool? IsMyOffer { get; set; }
 }
+
 
 public class BookItemResponse
 {

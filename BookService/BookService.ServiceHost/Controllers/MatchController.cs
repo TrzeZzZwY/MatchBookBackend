@@ -50,6 +50,9 @@ public class MatchController : ControllerBase
                     LastName = e.LastName,
                     MatchBookPair = e.Items.Select(r => new MatchBookPairResponse
                     {
+                        ExchangeId = r.ExchangeId,
+                        ExchangeStatus = r.ExchangeStatus,
+                        IsMyOffer = r.IsMyOffer,
                         OfferedBook = new BookItemResponse
                         {
                             Title = r.OfferedBook.Title,
@@ -60,7 +63,7 @@ public class MatchController : ControllerBase
                         {
                             Title = r.RequestedBook.Title,
                             ImageId = r.RequestedBook.ImageId,
-                            UserBookItemId = r.OfferedBook.UserBookItemId
+                            UserBookItemId = r.RequestedBook.UserBookItemId
                         },
                     }).ToList()
                 }).ToList()

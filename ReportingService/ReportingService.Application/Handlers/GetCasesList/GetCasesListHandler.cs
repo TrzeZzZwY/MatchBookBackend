@@ -27,6 +27,7 @@ public class GetCasesListHandler : IRequestHandler<GetCasesListCommand, Result<P
         if (request.CaseType is not null)
             cases = cases.Where(e => e.CaseItemType == request.CaseType);
 
+        cases = cases.OrderByDescending(e => e.Id);
         var total = cases.Count();
 
         cases = cases

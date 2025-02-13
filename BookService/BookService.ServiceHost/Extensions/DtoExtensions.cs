@@ -8,6 +8,8 @@ using BookService.Application.Handlers.GetAuthor;
 using BookService.Application.Handlers.GetBook;
 using BookService.Application.Handlers.GetBookPoint;
 using BookService.Application.Handlers.GetUserBookItems;
+using BookService.Application.Handlers.Exchange.GetExchanges;
+using BookService.ServiceHost.Controllers.Dto.Exchanges;
 
 namespace BookService.ServiceHost.Extensions;
 
@@ -71,6 +73,33 @@ public static class DtoExtensions
             Status = result.Status,
             BookReference = result.BookReference.ToDto(),
             ImageId = result.ImageId
+        };
+    }
+
+    public static GetExchangesResponse ToDto(this GetExchangesResult result)
+    {
+        return new GetExchangesResponse
+        {
+            ExchangeId = result.ExchangeId,
+            Status = result.Status,
+            Initiator = new ExchangeItemResponse
+            {
+                UserId = result.Initiator.UserId,
+                UserFirstName = result.Initiator.UserFirstName,
+                UserLastName = result.Initiator.UserLastName,
+                BookItemId = result.Initiator.BookItemId,
+                BookTitle = result.Initiator.BookTitle,
+                BookImageId = result.Initiator.BookImageId,
+            },
+            Receiver = new ExchangeItemResponse
+            {
+                UserId = result.Receiver.UserId,
+                UserFirstName = result.Receiver.UserFirstName,
+                UserLastName = result.Receiver.UserLastName,
+                BookItemId = result.Receiver.BookItemId,
+                BookTitle = result.Receiver.BookTitle,
+                BookImageId = result.Receiver.BookImageId,
+            },
         };
     }
 }

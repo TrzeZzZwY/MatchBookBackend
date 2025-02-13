@@ -31,7 +31,31 @@ public class CaseActionController : ControllerBase
             UserId = request.UserId,
             Type = request.Type,
             CaseFields = request.CaseFields,
-            ItemId = request.ItemId
+            ItemId = request.ItemId,
+            Notes = "Auto-created case",
+            ReportType = ReportType.AutoReport
+        };
+
+        var result = await _mediator.Send(command, cancellation);
+
+        if (result.IsSuccess)
+            return StatusCode(StatusCodes.Status201Created, new CreateEntityResponse { Id = result.Value.CaseId });
+
+        return result.Error.ToErrorResult();
+    }
+
+    [HttpPost("report")]
+    [Authorize(Roles = "User")]
+    public async Task<ActionResult<CreateEntityResponse>> UserCreateCase([FromBody] CreateCaseRequestUser request, CancellationToken cancellation)
+    {
+        var command = new CreateCaseCommand
+        {
+            UserId = request.UserId,
+            Type = request.Type,
+            CaseFields = request.CaseFields,
+            ItemId = request.ItemId,
+            ReportType = ReportType.UserReport,
+            Notes = request.Notes
         };
 
         var result = await _mediator.Send(command, cancellation);
