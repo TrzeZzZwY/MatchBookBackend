@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace BookService.Domain.Common;
-[JsonConverter(typeof(JsonStringEnumConverter))]
+﻿namespace BookService.Domain.Common;
 public enum ExchangeStatus
 {
     Pending = 0,
