@@ -27,19 +27,15 @@ public class CreateTokenHandler : IRequestHandler<CreateTokenCommand, Result<Cre
             .Where(e => e.Id == request.AccountId)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (account is null) return new Error("User not found", ErrorReason.BadRequest);
-
-        if (account.UserAccountId is not null)
-            _databaseContext.Entry(account).Reference(e => e.UserAccount).Load();
-        if (account.AdminAccountId is not null)
-            _databaseContext.Entry(account).Reference(e => e.AdminAccount).Load();
+        if (account is null) return new Error("User not found", ErrorReason.NotFound);
 
         var roles = await _userManager.GetRolesAsync(account);
 
-        var tokenGenerateResult = await _tokenService.GenerateJsonWebToken(GetClaims(request, roles, account));
+        var tokenGenerateResult = await _tokenService.GenerateJsonWebToken(GetClaims(request, roles));
         if (tokenGenerateResult.IsFailure) return tokenGenerateResult.Error;
 
-        var refreshToken = await _databaseContext.RefreshTokens.Where(e => e.AccountId == request.AccountId).FirstOrDefaultAsync(cancellationToken);
+        var refreshToken = await _databaseContext.RefreshTokens
+            .Where(e => e.AccountId == request.AccountId).FirstOrDefaultAsync(cancellationToken);
         if (refreshToken is null || refreshToken.ExpireDate <= DateTime.UtcNow)
         {
             if (refreshToken is null)
@@ -60,7 +56,7 @@ public class CreateTokenHandler : IRequestHandler<CreateTokenCommand, Result<Cre
         return new CreateTokenResult { Token = tokenGenerateResult.Value, RefreshToken = refreshToken.Token };
     }
 
-    private List<Claim> GetClaims(CreateTokenCommand request, IList<string> roles, Account account)
+    private List<Claim> GetClaims(CreateTokenCommand request, IList<string> roles)
     {
         var claims = new List<Claim>
         {

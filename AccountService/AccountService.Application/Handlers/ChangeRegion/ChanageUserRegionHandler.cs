@@ -8,9 +8,9 @@ namespace AccountService.Application.Handlers.ChangeRegion;
 public class ChanageUserRegionHandler : IRequestHandler<ChangeUserRegionCommand, Result<ChangeUserRegionResult, Error>>
 {
     private readonly DatabaseContext _context;
-    private readonly BookServiceClient _bookServiceClient;
+    private readonly IBookServiceClient _bookServiceClient;
 
-    public ChanageUserRegionHandler(DatabaseContext databaseContext, BookServiceClient bookServiceClient)
+    public ChanageUserRegionHandler(DatabaseContext databaseContext, IBookServiceClient bookServiceClient)
     {
         _context = databaseContext;
         _bookServiceClient = bookServiceClient;

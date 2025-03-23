@@ -16,7 +16,7 @@ public static class IdentityExtensions
         options.Lockout.MaxFailedAccessAttempts = 3;
         options.SignIn.RequireConfirmedEmail = false;
     };
-    public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
+    public static void AddIdentity(this IServiceCollection services)
     {
         services.AddIdentityCore<Account>(_options)
         .AddRoles<AccountRole>()

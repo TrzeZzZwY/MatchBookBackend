@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
 
 namespace AccountService.Application.Clients;
-public class BookServiceClient
+public class BookServiceClient : IBookServiceClient
 {
     private readonly HttpClient _httpClient;
     private readonly IHttpContextAccessor _httpContextAccessor;

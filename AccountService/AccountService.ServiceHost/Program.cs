@@ -28,7 +28,7 @@ builder.Services.AddMediatR(config =>
     config.RegisterServicesFromAssembly(typeof(RegisterUserHandler).Assembly);
 });
 
-builder.Services.AddIdentity(configuration);
+builder.Services.AddIdentity();
 // Add services to the container.
 builder.Services.AddJWTAuthentication(configuration);
 

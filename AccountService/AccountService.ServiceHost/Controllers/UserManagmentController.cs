@@ -19,7 +19,9 @@ public class UserManagmentController : ControllerBase
     [HttpPost]
     [Route("account-status")]
     [Authorize("Admin")]
-    public async Task<ActionResult> ChangeUserStatus([FromBody] ChangeUserStatusRequest request, CancellationToken cancellation)
+    public async Task<ActionResult> ChangeUserStatus(
+        [FromBody] ChangeUserStatusRequest request,
+        CancellationToken cancellation)
     {
         var command = new ChangeUserStatusCommand { Status = request.Status, UserId = request.UserId };
 

@@ -22,20 +22,19 @@ public class GetUserHandler : IRequestHandler<GetUserCommand, Result<GetUserResu
     public async Task<Result<GetUserResult?, Error>> Handle(GetUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.UserAccounts.FindAsync([request.Id], cancellationToken);
+        if (user is null) return (GetUserResult)null;
 
         await _context.Entry(user).Reference(e => e.Account).LoadAsync();
 
-        return user is null ?
-            null :
-            new GetUserResult
-            {
-                Id = user.Id,
-                Email = user.Account.Email!,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                BirthDate = user.BirthDate,
-                Region = user.Region,
-                Status = user.Account.Status
-            };
+        return new GetUserResult
+        {
+            Id = user.Id,
+            Email = user.Account.Email!,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            BirthDate = user.BirthDate,
+            Region = user.Region,
+            Status = user.Account.Status
+        };
     }
 }
